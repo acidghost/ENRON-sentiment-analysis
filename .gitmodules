@@ -1,0 +1,3 @@
+[submodule "hathi-client"]
+	path = hathi-client
+	url = git@github.com:sara-nl/hathi-client.git
