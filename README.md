@@ -12,3 +12,13 @@ Steps needed:
 
 ---
 > <sup>1</sup> Found only in PDF for now... [here](http://law2.umkc.edu/faculty/projects/ftrials/enron/enronstockchart.pdf) and [here](http://www.gilardi.com/pdf/enro13ptable.pdf)
+
+
+# Install
+git clone https://github.com/acidghost/ENRON-sentiment-analysis.git
+git submodule update --depth 1 --init --recursive
+hathi-client/bin/get.sh hadoop
+hathi-client/bin/get.sh spark
+
+
+kinit lsde03
