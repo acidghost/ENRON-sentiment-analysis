@@ -11,14 +11,22 @@ Steps needed:
 - plot sentiment per day compared to stock prices.
 
 ---
+
 > <sup>1</sup> Found only in PDF for now... [here](http://law2.umkc.edu/faculty/projects/ftrials/enron/enronstockchart.pdf) and [here](http://www.gilardi.com/pdf/enro13ptable.pdf)
 
 
-# Install
-git clone https://github.com/acidghost/ENRON-sentiment-analysis.git
-git submodule update --depth 1 --init --recursive
-hathi-client/bin/get.sh hadoop
-hathi-client/bin/get.sh spark
+### Setup
+1. `git clone https://github.com/acidghost/ENRON-sentiment-analysis.git`  
+2. `git submodule update --depth 1 --init --recursive`  
+3. `./hathi-client/bin/get.sh hadoop`  
+4. `./hathi-client/bin/get.sh spark`
+
+### Usage
+1. `eval $(./hathi-client/bin/env.sh)`
+2. `kinit USRNAME`
+
+#### Bugs / problems
+To use `spark-shell` you need to change the file `./hathi-client/conf/spark/spark-env.sh` and add the spark option `-Dscala.usejavacp=true`.
+A pull request has already been made to fix this in the hathi-client repo.
 
 
-kinit lsde03
