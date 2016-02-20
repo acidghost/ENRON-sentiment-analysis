@@ -12,6 +12,8 @@ object Unzipper extends App {
     val conf = new SparkConf().setAppName(appName)
     val sc = new SparkContext(conf)
 
+    if (sc == null) System.exit(1)
+
     val outDir = "hdfs:///user/lsde03/enron/extracted_txt"
 
     sc.binaryFiles("hdfs:///user/hannesm/lsde/enron/*.zip").foreach { case (fileName, stream) =>
@@ -23,10 +25,10 @@ object Unzipper extends App {
             case splitted => splitted(0)
         }
 
-        unzip(stream, outDir + File.separator + mailboxName)
+        unzip(sc, stream, outDir + File.separator + mailboxName)
     }
 
-    def unzip(stream: PortableDataStream, mailboxDir: String, filter: String = "text_000/") = {
+    def unzip(sc: SparkContext, stream: PortableDataStream, mailboxDir: String, filter: String = "text_000/") = {
 
         val buffer = new Array[Byte](1024)
 
