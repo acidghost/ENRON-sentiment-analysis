@@ -2,6 +2,7 @@
 ###### Large Scale Data Engineering assignment - VU MSc AI
 
 Steps needed:
+
 - find a suitable form for the data (possibly SparkSQL tables?);
 - preprocess data and put them in that form;
 - tag each email with sentiment using Stanford CoreNLP;
