@@ -15,11 +15,10 @@ object BuildSettings {
 
     val sparkVersion = "1.6.0"
     val sparkCore = "org.apache.spark" %% "spark-core" % sparkVersion % "provided"
+    val sparkSql = "org.apache.spark" %% "spark-sql" % sparkVersion % "provided"
 
     val hadoopVersion = "2.7.1"
     val hadoopClient = "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "provided"
-
-    val javamail = "javax.mail" % "mail" % "1.4"
 }
 
 object Build extends Build {
@@ -33,20 +32,24 @@ object Build extends Build {
         assemblyOption in assembly := (assemblyOption in assembly).value.copy(includeScala = false)
     )
 
+    lazy val commonsSettings = rootSettings ++ Seq(
+        libraryDependencies ++= Seq()
+    )
+
     lazy val unzipperSettings = rootSettings ++ Seq(
         libraryDependencies ++= Seq(sparkCore, hadoopClient),
         assemblyJarName in assembly := "unzipper.jar"
     )
 
     lazy val parserSettings = rootSettings ++ Seq(
-        libraryDependencies ++= Seq(sparkCore, hadoopClient, javamail),
+        libraryDependencies ++= Seq(sparkCore, hadoopClient, sparkSql),
         assemblyJarName in assembly := "parser.jar"
     )
 
 
     lazy val root = Project(id = "root", base = file("."), settings = rootSettings).aggregate(unzipper, parser)
 
-    lazy val commons = Project(id = "commons", base = file("./commons"))
+    lazy val commons = Project(id = "commons", base = file("./commons"), settings = commonsSettings)
 
     lazy val unzipper = Project(id = "unzipper", base = file("./unzipper"), settings = unzipperSettings).dependsOn(commons)
 
