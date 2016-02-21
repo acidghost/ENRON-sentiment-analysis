@@ -1,5 +1,6 @@
 import sbt.Keys._
 import sbt._
+import sbtassembly.AssemblyKeys._
 
 object BuildSettings {
 
@@ -13,26 +14,42 @@ object BuildSettings {
     )
 
     val sparkVersion = "1.6.0"
-    val sparkCore = "org.apache.spark" %% "spark-core" % sparkVersion
+    val sparkCore = "org.apache.spark" %% "spark-core" % sparkVersion % "provided"
 
     val hadoopVersion = "2.7.1"
-    val hadoopClient = "org.apache.hadoop" % "hadoop-client" % hadoopVersion
+    val hadoopClient = "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "provided"
+
+    val javamail = "javax.mail" % "mail" % "1.4"
 }
 
 object Build extends Build {
 
     import BuildSettings._
 
-    lazy val root = Project(id = "root", base = file(".")).aggregate(unzipper)
+
+    lazy val rootSettings = buildSettings ++
+      sbtassembly.AssemblyPlugin.assemblySettings ++
+      net.virtualvoid.sbt.graph.DependencyGraphSettings.graphSettings ++ Seq(
+        assemblyOption in assembly := (assemblyOption in assembly).value.copy(includeScala = false)
+    )
+
+    lazy val unzipperSettings = rootSettings ++ Seq(
+        libraryDependencies ++= Seq(sparkCore, hadoopClient),
+        assemblyJarName in assembly := "unzipper.jar"
+    )
+
+    lazy val parserSettings = rootSettings ++ Seq(
+        libraryDependencies ++= Seq(sparkCore, hadoopClient, javamail),
+        assemblyJarName in assembly := "parser.jar"
+    )
+
+
+    lazy val root = Project(id = "root", base = file("."), settings = rootSettings).aggregate(unzipper, parser)
 
     lazy val commons = Project(id = "commons", base = file("./commons"))
 
-    lazy val unzipper = Project(
-        id = "unzipper",
-        base = file("./unzipper"),
-        settings = buildSettings ++ Seq(
-            libraryDependencies ++= Seq(sparkCore, hadoopClient)
-        )
-    ).dependsOn(commons)
+    lazy val unzipper = Project(id = "unzipper", base = file("./unzipper"), settings = unzipperSettings).dependsOn(commons)
+
+    lazy val parser = Project(id = "parser", base = file("./parser"), settings = parserSettings).dependsOn(commons)
 
 }
