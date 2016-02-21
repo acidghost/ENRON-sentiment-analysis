@@ -1,6 +1,5 @@
 package nl.vu.ai.lsde.enron
 
-
 object Commons {
 
     val SOURCE_ENRON_DATA = "hdfs:///user/hannesm/lsde/enron"
