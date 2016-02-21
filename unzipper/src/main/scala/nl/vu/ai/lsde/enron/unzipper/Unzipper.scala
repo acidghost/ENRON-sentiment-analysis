@@ -5,7 +5,6 @@ import java.util.zip.{ZipEntry, ZipInputStream}
 import nl.vu.ai.lsde.enron.Commons
 import org.apache.spark.input.PortableDataStream
 import org.apache.spark.{SparkConf, SparkContext}
-import org.slf4j.LoggerFactory
 
 object Unzipper extends App {
 
@@ -13,11 +12,8 @@ object Unzipper extends App {
     val conf = new SparkConf().setAppName(appName)
     val sc = new SparkContext(conf)
 
-    val logger = LoggerFactory.getLogger(getClass)
-
     val dataset = sc.binaryFiles(s"${Commons.SOURCE_ENRON_DATA}/*.zip").map { case (fileName, stream) =>
         val zipName = fileName.split('/').last.split(".zip")(0)
-        if (logger != null) logger.info(s"Unzipping $zipName")
 
         val mailboxName = zipName.split('_') match {
             case splitted: Any if splitted.length > 1 => splitted(1)
@@ -28,7 +24,7 @@ object Unzipper extends App {
         (mailboxName, documents)
     }
 
-    dataset.saveAsTextFile(Commons.ENRON_EXTRACTED_TXT)
+    dataset.saveAsObjectFile(Commons.ENRON_EXTRACTED_TXT)
 
     def unzip(stream: PortableDataStream, filter: String = "text_000/"): Seq[String] = {
 
@@ -37,7 +33,7 @@ object Unzipper extends App {
         val zis: ZipInputStream = new ZipInputStream(stream.open)
         var ze: ZipEntry = zis.getNextEntry
 
-        val documents = scala.collection.mutable.ArraySeq[String]()
+        val documents = scala.collection.mutable.ArrayBuffer.empty[String]
 
         while (ze != null) {
             val fileName = ze.getName
@@ -47,11 +43,11 @@ object Unzipper extends App {
                 val fileTxt = new StringBuilder
                 var len: Int = zis.read(buffer)
                 while (len > 0) {
-                    fileTxt + buffer.map(_.toChar).mkString
+                    fileTxt ++= buffer.map(_.toChar).mkString
                     len = zis.read(buffer)
                 }
 
-                documents + fileTxt.toString
+                documents += fileTxt.toString
             }
 
             ze = zis.getNextEntry
