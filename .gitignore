@@ -4,3 +4,4 @@ metastore_db
 .idea
 .idea_modules
 target
+edrm*
