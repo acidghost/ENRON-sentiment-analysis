@@ -22,7 +22,7 @@ object Build extends Build {
 
     import BuildSettings._
 
-    lazy val root = Project(id = "root", base = file(".")).aggregate(unzipper)
+    lazy val root = Project(id = "root", base = file("."))
 
     lazy val unzipper = Project(
         id = "unzipper",
@@ -30,6 +30,6 @@ object Build extends Build {
         settings = buildSettings ++ Seq(
             libraryDependencies ++= Seq(sparkCore, hadoopClient)
         )
-    )
+    ).dependsOn(root)
 
 }
