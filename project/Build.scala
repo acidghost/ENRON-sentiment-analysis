@@ -1,7 +1,8 @@
+import sbt.Keys._
 import sbt._
-import Keys._
 
 object BuildSettings {
+
     val buildSettings = Defaults.coreDefaultSettings ++ Seq(
         organization := "nl.vu.ai.lsde",
         version := "1.0.0",
