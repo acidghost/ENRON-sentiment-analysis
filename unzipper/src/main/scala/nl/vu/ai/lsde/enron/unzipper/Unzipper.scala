@@ -20,8 +20,8 @@ object Unzipper extends App {
         if (logger != null) logger.info(s"Unzipping $zipName")
 
         val mailboxName = zipName.split('_') match {
-            case splitted if splitted.length > 1 => splitted(1)
-            case splitted => splitted(0)
+            case splitted: Any if splitted.length > 1 => splitted(1)
+            case splitted: Any => splitted(0)
         }
 
         val documents = unzip(stream)

@@ -38,10 +38,12 @@ class Parser extends App {
 }
 
 // run with:
-// scala-2.11 -cp unzipper/target/scala-2.10/unzipper_2.10-1.0.0.jar nl.vu.ai.lsde.enron.unzipper.test
-object test extends App {
+// scala-2.11 -cp unzipper/target/scala-2.10/unzipper_2.10-1.0.0.jar nl.vu.ai.lsde.enron.unzipper.Test
+object Test extends App {
 
+    // scalastyle:off line.size.limit
     var test = "Date: Wed, 7 Feb 2001 14:11:00 -0800 (PST)\nFrom: Harry Arora\nSubject: Allan Sommer\nX-SDOC: 528063\nX-ZLID: zl-edrm-enron-v2-arora-h-914.eml\n\n\n\n***********\nEDRM Enron Email Data Set has been produced in EML, PST and NSF format by ZL Technologies, Inc. This Data Set is licensed under a Creative Commons Attribution 3.0 United States License <http://creativecommons.org/licenses/by/3.0/us/> . To provide attribution, please cite to \"ZL Technologies, Inc. (http://www.zlti.com).\"\n***********"
+    // scalastyle:on line.size.limit
     var p = new Parser()
     p.parse(test)
 }
