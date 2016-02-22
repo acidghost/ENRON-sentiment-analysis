@@ -5,3 +5,4 @@ metastore_db
 .idea_modules
 target
 edrm*
+Parser.iml

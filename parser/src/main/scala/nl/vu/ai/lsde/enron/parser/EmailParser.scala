@@ -1,9 +1,7 @@
 package nl.vu.ai.lsde.enron.parser
 
 import java.text.SimpleDateFormat
-
 import nl.vu.ai.lsde.enron.Email
-
 
 object EmailParser {
 

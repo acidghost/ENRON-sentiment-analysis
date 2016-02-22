@@ -6,7 +6,7 @@ import nl.vu.ai.lsde.enron.Commons
 import org.apache.spark.input.PortableDataStream
 import org.apache.spark.{SparkConf, SparkContext}
 
-object Unzipper extends App {
+object UnzipperDriver extends App {
 
     val appName = "ENRON-unzipper"
     val conf = new SparkConf().setAppName(appName)
