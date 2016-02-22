@@ -5,15 +5,21 @@ import java.text.SimpleDateFormat
 import nl.vu.ai.lsde.enron.Email
 
 
-object EmailHeadersParser {
+object EmailParser {
 
     val datePattern = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z '('z')'")
 
-    def parse(headersTxt: String): Email = {
-        val headers = headersTxt.split("\n")
+    def parse(text: String): Email = {
+        val (headers, body) = text.split("\n\n") match {
+            case s => (s.head.split("\n"), s.tail.mkString("\n\n"))
+        }
+
+        val bodyNoFooter = body.split("\n\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*") match { case s => s.head }
 
         val date = filterHeader(headers, "Date: ") match {
-            case Some(s) => Some(new java.sql.Date(datePattern.parse(s).getTime))
+            case Some(s) =>
+                try Some(new java.sql.Date(datePattern.parse(s).getTime))
+                catch { case e: java.text.ParseException => None }
             case _ => None
         }
 
@@ -24,13 +30,15 @@ object EmailHeadersParser {
 
         val subject = filterHeader(headers, "Subject: ")
 
-        Email(date, from, to, cc, bcc, subject, "")
+        Email(date, from, to, cc, bcc, subject, bodyNoFooter)
     }
 
     private def filterHeader(headers: Seq[String], filter: String): Option[String] = {
         headers.filter(h => h.startsWith(filter)) match {
             case Seq() => None
-            case x: Seq[String] => Some(x.head.split(filter)(1))
+            case x: Seq[String] =>
+                try Some(x.head.split(filter)(1))
+                catch { case e: java.lang.ArrayIndexOutOfBoundsException => None }
         }
     }
 
