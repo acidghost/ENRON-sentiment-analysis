@@ -1,13 +1,15 @@
 package nl.vu.ai.lsde.enron.parser
 
 import java.text.SimpleDateFormat
+
 import nl.vu.ai.lsde.enron.Email
 
 object EmailParser {
 
     val datePattern = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z '('z')'")
     val enronDatasetFooter = "\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\nEDRM Enron Email Data Set has been produced in EML"
-    val forwardedBy = ("---------------------- Forwarded by ", "---------------------------")
+    val forwardedBy = ("\\s?---------------------- Forwarded by ", "(\\w*\\s)?---------------------------")
+    val forwardedByReg = forwardedBy._1 + "(.*)\\n" + forwardedBy._2
     val subjectFwd = "^F[Ww]: [\\w\\W\\s]*$"
     val subjectReply = "^R[Ee]: [\\w\\W\\s]*$"
     val originalMsg = ">?\\s? -----Original Message-----"
@@ -39,7 +41,7 @@ object EmailParser {
         if (subject.isEmpty) throw new EmailParsingException(s"Unable to parse SUBJECT header in email:\n$text")
 
         val bodyNoFooter = body.split(enronDatasetFooter) match { case s: Array[String] => s.head }
-        val bodyNoFwd = bodyNoFooter.replaceAll(forwardedBy._1, "").replaceAll(forwardedBy._2, "")
+        val bodyNoFwd = bodyNoFooter.replaceAll(forwardedByReg, "")
 
         val bodyNoOrig = if (subject.get.matches(subjectFwd)) {
             bodyNoFwd.replaceAll(originalMsg, "")
@@ -48,14 +50,14 @@ object EmailParser {
             catch { case e: NoSuchElementException => throw new EmailParsingException(s"Unable to process body of email:\n$text") }
         }
 
-        val bodyNoHeaders = bodyNoOrig .split('\n').map(_
-          .replaceAll(">?\\s?From: [^\\n]*$", "")
-          .replaceAll(">?\\s?To: [^\\n]*$", "")
-          .replaceAll(">?\\s?[Cc]c: [^\\n]*$", "")
-          .replaceAll(">?\\s?[Bb]cc: [^\\n]*$", "")
-          .replaceAll(">?\\s?Subject: [^\\n]*$", "")
-          .replaceAll(">?\\s?Sent: [^\\n]*$", "")
-          .replaceAll(">?\\s?Sent by: [^\\n]*$", "")
+        val bodyNoHeaders = bodyNoOrig.split('\n').map(_
+          .replaceAll(">?\\s?From:\\s[^\\n]*$", "")
+          .replaceAll(">?\\s?To:\\s[^\\n]*$", "")
+          .replaceAll(">?\\s?[Cc]c:\\s[^\\n]*$", "")
+          .replaceAll(">?\\s?[Bb]cc:\\s[^\\n]*$", "")
+          .replaceAll(">?\\s?Subject:\\s[^\\n]*$", "")
+          .replaceAll(">?\\s?Sent:\\s[^\\n]*$", "")
+          .replaceAll(">?\\s?Sent by:\\s[^\\n]*$", "")
         ).mkString("\n")
 
         Email(date.get, from.get, to, cc, bcc, subject.get, bodyNoHeaders)
