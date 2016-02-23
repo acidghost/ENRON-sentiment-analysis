@@ -16,9 +16,12 @@ object BuildSettings {
     val sparkVersion = "1.6.0"
     val sparkCore = "org.apache.spark" %% "spark-core" % sparkVersion % "provided"
     val sparkSql = "org.apache.spark" %% "spark-sql" % sparkVersion % "provided"
+    val sparkMLlib = "org.apache.spark" %% "spark-mllib" % sparkVersion % "provided"
 
     val hadoopVersion = "2.7.1"
     val hadoopClient = "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "provided"
+
+    val coreNLP = "edu.stanford.nlp" % "stanford-corenlp" % "3.6.0"
 }
 
 object Build extends Build {
@@ -46,13 +49,20 @@ object Build extends Build {
         assemblyJarName in assembly := "parser.jar"
     )
 
+    lazy val spamFilterSettings = rootSettings ++ Seq(
+        libraryDependencies ++= Seq(sparkCore, hadoopClient, sparkSql, sparkMLlib, coreNLP),
+        assemblyJarName in assembly := "spam-filter.jar"
+    )
 
-    lazy val root = Project(id = "root", base = file("."), settings = rootSettings).aggregate(unzipper, parser)
+
+    lazy val root = Project(id = "root", base = file("."), settings = rootSettings).aggregate(unzipper, parser, spamFilter)
 
     lazy val commons = Project(id = "commons", base = file("./commons"), settings = commonsSettings)
 
     lazy val unzipper = Project(id = "unzipper", base = file("./unzipper"), settings = unzipperSettings).dependsOn(commons)
 
     lazy val parser = Project(id = "parser", base = file("./parser"), settings = parserSettings).dependsOn(commons)
+
+    lazy val spamFilter = Project(id = "spam-filter", base = file("./spam-filter"), settings = spamFilterSettings).dependsOn(commons)
 
 }
