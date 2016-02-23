@@ -2,7 +2,7 @@ package nl.vu.ai.lsde.enron.parser
 
 import nl.vu.ai.lsde.enron.{Commons, MailBox}
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.{SaveMode, SQLContext}
+import org.apache.spark.sql.{SQLContext, SaveMode}
 import org.apache.spark.{SparkConf, SparkContext}
 
 object ParserDriver extends App {

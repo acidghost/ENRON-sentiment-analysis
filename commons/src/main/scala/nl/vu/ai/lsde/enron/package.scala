@@ -1,6 +1,6 @@
 package nl.vu.ai.lsde
 
-import java.sql.Date
+import java.sql.Timestamp
 
 
 package object enron {
@@ -16,12 +16,12 @@ package object enron {
 
     }
 
-    case class Email(date: Option[Date],
-                     from: Option[Seq[String]],
+    case class Email(date: Timestamp,
+                     from: Seq[String],
                      to: Option[Seq[String]],
                      cc: Option[Seq[String]],
                      bcc: Option[Seq[String]],
-                     subject: Option[String],
+                     subject: String,
                      body: String)
 
     case class MailBox(name: String, emails: Seq[Email])
