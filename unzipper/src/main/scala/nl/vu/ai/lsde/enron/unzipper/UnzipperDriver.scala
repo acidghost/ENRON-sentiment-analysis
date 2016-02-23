@@ -29,7 +29,7 @@ object UnzipperDriver extends App {
     def unzip(stream: PortableDataStream, filter: String = "text_000/"): Seq[String] = {
 
         val buffer = new Array[Byte](1024)
-        val regexNotAttachments = "\\d+.\\d+.\\w+.txt"
+        val regexNotAttachments = "[\\W\\w]*/\\d+\\.\\d+\\.\\w+\\.txt"
 
         val zis: ZipInputStream = new ZipInputStream(stream.open)
         var ze: ZipEntry = zis.getNextEntry
