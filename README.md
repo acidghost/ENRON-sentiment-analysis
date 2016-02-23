@@ -15,8 +15,4 @@
 1. `eval $(./hathi-client/bin/env.sh)`
 2. `kinit USRNAME`
 
-#### Bugs / problems
-To use `spark-shell` you need to change the file `./hathi-client/conf/spark/spark-env.sh` and add the spark option `-Dscala.usejavacp=true`.
-A pull request has already been made to fix this in the hathi-client repo.
-
 
