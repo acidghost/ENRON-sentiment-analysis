@@ -7,10 +7,9 @@ object BuildSettings {
     val buildSettings = Defaults.coreDefaultSettings ++ Seq(
         organization := "nl.vu.ai.lsde",
         version := "1.0.0",
-        scalaVersion := "2.10.6",
+        scalaVersion := "2.11.7",
         resolvers += Resolver.sonatypeRepo("snapshots"),
-        resolvers += Resolver.sonatypeRepo("releases"),
-        scalacOptions ++= Seq()
+        resolvers += Resolver.sonatypeRepo("releases")
     )
 
     val sparkVersion = "1.6.0"
@@ -21,7 +20,11 @@ object BuildSettings {
     val hadoopVersion = "2.7.1"
     val hadoopClient = "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "provided"
 
-    val coreNLP = "edu.stanford.nlp" % "stanford-corenlp" % "3.6.0"
+    val coreNLPVersion = "3.6.0"
+    val coreNLP = "edu.stanford.nlp" % "stanford-corenlp" % coreNLPVersion
+    val coreNLPModels = "edu.stanford.nlp" % "stanford-corenlp" % coreNLPVersion classifier "models"
+
+    val protobuf = "com.google.protobuf" % "protobuf-java" % "2.6.1"
 }
 
 object Build extends Build {
@@ -50,7 +53,7 @@ object Build extends Build {
     )
 
     lazy val spamFilterSettings = rootSettings ++ Seq(
-        libraryDependencies ++= Seq(sparkCore, hadoopClient, sparkSql, sparkMLlib, coreNLP),
+        libraryDependencies ++= Seq(sparkCore, hadoopClient, sparkSql, sparkMLlib, coreNLP, coreNLPModels, protobuf),
         assemblyJarName in assembly := "spam-filter.jar"
     )
 
