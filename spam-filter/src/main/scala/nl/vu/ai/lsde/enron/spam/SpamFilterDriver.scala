@@ -53,12 +53,20 @@ object SpamFilterDriver {
         import sqlContext.implicits._
 
         val df = sqlContext.read.parquet(Commons.ENRON_DATAFRAME)
+
+        println("Dataset before spam filtering")
+        df.select('name, 'emails).map(r => (r.getString(0), r.getSeq(1).length)).collect().foreach(println)
+        println("\n")
+
         val tokenized = df.select('name, 'emails).map(tokenizeMailbox)
         val tfMessages = tokenized.map(toTF)
         val tfidfMessages = tfMessages.map(toTFIDF)
         val hamMessages = tfidfMessages.map(filterSpam)
 
         val hamDF = hamMessages.toDF()
+        println("Dataset after spam filtering")
+        hamDF.select('name, 'emails).map(r => (r.getString(0), r.getSeq(1).length)).collect().foreach(println)
+
         hamDF.write.mode(SaveMode.Overwrite).parquet(Commons.ENRON_DATAFRAME_HAM)
 
     }
