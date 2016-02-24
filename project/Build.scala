@@ -7,7 +7,7 @@ object BuildSettings {
     val buildSettings = Defaults.coreDefaultSettings ++ Seq(
         organization := "nl.vu.ai.lsde",
         version := "1.0.0",
-        scalaVersion := "2.11.7",
+        scalaVersion := "2.10.6",
         resolvers += Resolver.sonatypeRepo("snapshots"),
         resolvers += Resolver.sonatypeRepo("releases")
     )

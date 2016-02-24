@@ -12,7 +12,10 @@ object Tokenizer {
     val morph = new Morphology
 
     def tokenize(email: String): Seq[String] = {
-        val emailBody = email.split("\n").tail.mkString(" ")
+        val emailBody = email.split("\n") match {
+            case s: Array[String] if s.nonEmpty => s.tail.mkString(" ")
+            case _ => return Seq()
+        }
         emailBody.split(" ").filter(tokensToTake).map(morph.stem)
     }
 

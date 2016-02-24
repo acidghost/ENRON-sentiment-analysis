@@ -60,7 +60,7 @@ object EmailParser {
           .replaceAll(">?\\s?Sent by:\\s[^\\n]*$", "")
         ).mkString("\n")
 
-        Email(date.get, from.get, to, cc, bcc, subject.get, bodyNoHeaders)
+        Email(date.get, from.get, to.getOrElse(Seq()), cc.getOrElse(Seq()), bcc.getOrElse(Seq()), subject.get, bodyNoHeaders)
     }
 
     private def filterHeader(headers: Seq[String], filter: String): Option[String] = {
