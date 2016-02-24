@@ -20,9 +20,9 @@ object BuildSettings {
     val hadoopVersion = "2.7.1"
     val hadoopClient = "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "provided"
 
-    val coreNLPVersion = "3.6.0"
+    val coreNLPVersion = "3.4.1"
     val coreNLP = "edu.stanford.nlp" % "stanford-corenlp" % coreNLPVersion
-    val coreNLPModels = "edu.stanford.nlp" % "stanford-corenlp" % coreNLPVersion classifier "models"
+    val coreNLPModels = "edu.stanford.nlp" % "stanford-corenlp" % coreNLPVersion classifier "models-english"
 
     val protobuf = "com.google.protobuf" % "protobuf-java" % "2.6.1"
 }
@@ -35,7 +35,8 @@ object Build extends Build {
     lazy val rootSettings = buildSettings ++
       sbtassembly.AssemblyPlugin.assemblySettings ++
       net.virtualvoid.sbt.graph.DependencyGraphSettings.graphSettings ++ Seq(
-        assemblyOption in assembly := (assemblyOption in assembly).value.copy(includeScala = false)
+        assemblyOption in assembly := (assemblyOption in assembly).value.copy(includeScala = false, cacheUnzip = false),
+        javaOptions in assembly += "-Xmx2g"
     )
 
     lazy val commonsSettings = rootSettings ++ Seq(
@@ -53,7 +54,10 @@ object Build extends Build {
     )
 
     lazy val spamFilterSettings = rootSettings ++ Seq(
-        libraryDependencies ++= Seq(sparkCore, hadoopClient, sparkSql, sparkMLlib, coreNLP, coreNLPModels, protobuf),
+        libraryDependencies ++= Seq(sparkCore, hadoopClient, sparkSql, sparkMLlib, coreNLP, protobuf),
+        assemblyOption in assembly := (assemblyOption in assembly).value.copy(includeDependency = false),
+        assembly <<= assembly dependsOn assemblyPackageDependency,
+        assemblyJarName in assemblyPackageDependency := "spam-filter-deps.jar",
         assemblyJarName in assembly := "spam-filter.jar"
     )
 
