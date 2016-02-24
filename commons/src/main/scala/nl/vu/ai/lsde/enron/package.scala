@@ -14,6 +14,7 @@ package object enron {
         val ENRON_EXTRACTED_TXT = s"$LSDE_ENRON/extracted_txt"
         val ENRON_DATAFRAME = s"$LSDE_ENRON/dataframe.parquet"
         val ENRON_SPAM_DATA = s"$LSDE_ENRON/spam-dataset"
+        val ENRON_SPAM_MODEL = s"$LSDE_ENRON/spam-model"
 
     }
 
