@@ -16,40 +16,43 @@ object EmailParser {
 
 
     def parse(text: String): Email = {
+        // get headers and body
         val (headers, body) = text.split("\n\n") match {
             case s: Array[String] => (s.head.split("\n"), s.tail.mkString("\n\n"))
         }
 
+        // get date
         val date = filterHeader(headers, "Date: ") match {
             case Some(s) =>
                 try Some(new java.sql.Timestamp(datePattern.parse(s).getTime))
                 catch { case e: java.text.ParseException => None }
             case _ => None
         }
-
         if (date.isEmpty) throw new EmailParsingException(s"Unable to parse DATE header in email:\n$text")
 
+        // get header entries
         val from = filterHeaderList(headers, "From: ")
         if (from.isEmpty) throw new EmailParsingException(s"Unable to parse FROM header in email:\n$text")
-
         val to = filterHeaderList(headers, "To: ")
-
         val cc = filterHeaderList(headers, "Cc: ")
         val bcc = filterHeaderList(headers, "Bcc: ")
-
         val subject = filterHeader(headers, "Subject: ")
         if (subject.isEmpty) throw new EmailParsingException(s"Unable to parse SUBJECT header in email:\n$text")
 
+        // filter fixed footer for the body
         val bodyNoFooter = body.split(enronDatasetFooter) match { case s: Array[String] => s.head }
+        // remove just the "forwarded by" tag
         val bodyNoFwd = bodyNoFooter.replaceAll(forwardedByReg, "")
-
-        val bodyNoOrig = if (subject.get.matches(subjectFwd)) {
+        // remove all the "original messages" text
+        val bodyNoOrig = if (subject.get.matches(subjectFwd)) { // check if email's subject reports something like Re: tag
             bodyNoFwd.replaceAll(originalMsg, "")
         } else {
+            // get the part above the originalMsg tag
             try { bodyNoFwd.split(originalMsg).head }
             catch { case e: NoSuchElementException => throw new EmailParsingException(s"Unable to process body of email:\n$text") }
         }
 
+        // clean body from headers
         val bodyNoHeaders = bodyNoOrig.split('\n').map(_
           .replaceAll(">?\\s?From:\\s[^\\n]*$", "")
           .replaceAll(">?\\s?To:\\s[^\\n]*$", "")
@@ -63,6 +66,11 @@ object EmailParser {
         Email(date.get, from.get, to, cc, bcc, subject.get, bodyNoHeaders)
     }
 
+    /** Returns a specific header entry from headers
+        @param headers row email header
+        @param filter identifier of the entry to be retrieved
+        @return the useful part of @filter from the whole header
+     */
     private def filterHeader(headers: Seq[String], filter: String): Option[String] = {
         headers.filter(h => h.startsWith(filter)) match {
             case Seq() => None
