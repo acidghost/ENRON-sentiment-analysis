@@ -66,11 +66,12 @@ object EmailParser {
         Email(date.get, from.get, to, cc, bcc, subject.get, bodyNoHeaders)
     }
 
-    /** Returns a specific header entry from headers
-        @param headers row email header
-        @param filter identifier of the entry to be retrieved
-        @return the useful part of @filter from the whole header
-     */
+    /** Returns a header entry from headers.
+      *
+      * @param headers raw email header
+      * @param filter identifier of the entry to retrieve
+      * @return the entry related to @filter attribute
+      */
     private def filterHeader(headers: Seq[String], filter: String): Option[String] = {
         headers.filter(h => h.startsWith(filter)) match {
             case Seq() => None
@@ -80,6 +81,13 @@ object EmailParser {
         }
     }
 
+    /** Returns all the comma-separated entries for a specific header attribute.
+      * Useful for header attributes like To, Cc, etc.
+      *
+      * @param headers raw email header
+      * @param filter identifier of the entry to retrieve
+      * @return list of entries related to @filter attribute
+      */
     private def filterHeaderList(headers: Seq[String], filter: String): Option[Seq[String]] = {
         filterHeader(headers, filter) match {
             case Some(s) => Some(s.split(",").map(_.trim))
