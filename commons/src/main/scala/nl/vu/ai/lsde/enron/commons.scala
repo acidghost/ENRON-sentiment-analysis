@@ -31,13 +31,18 @@ object Commons {
 
 }
 
+case class Person(name: String,
+                  email: Option[Email])
+
 case class Email(date: Timestamp,
-                 from: Seq[String],
-                 to: Seq[String],
-                 cc: Seq[String],
-                 bcc: Seq[String],
+                 from: Seq[Person],
+                 to: Seq[Person],
+                 cc: Seq[Person],
+                 bcc: Seq[Person],
                  subject: String,
                  body: String)
 
 case class MailBox(name: String, emails: Seq[Email])
+
+
 
