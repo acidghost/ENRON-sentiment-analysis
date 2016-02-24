@@ -1,7 +1,7 @@
 package nl.vu.ai.lsde.enron.spam
 
 import nl.vu.ai.lsde.enron.Commons
-import org.apache.spark.mllib.classification.{NaiveBayes, NaiveBayesModel}
+import org.apache.spark.mllib.classification.NaiveBayes
 import org.apache.spark.mllib.feature.{HashingTF, IDF}
 import org.apache.spark.mllib.linalg.Vector
 import org.apache.spark.mllib.regression.LabeledPoint
@@ -28,10 +28,14 @@ object SpamTrainerDriver extends App {
     spamVectors.cache()
     hamVectors.cache()
 
-
     val idf = new IDF() fit spamVectors ++ hamVectors
     val spamTfidf: RDD[Vector] = idf transform spamVectors
     val hamTfidf: RDD[Vector] = idf transform hamVectors
+
+    Commons.deleteFolder(Commons.ENRON_SPAM_TF)
+    sc.parallelize(Seq(tf)).saveAsObjectFile(Commons.ENRON_SPAM_TF)
+    Commons.deleteFolder(Commons.ENRON_SPAM_IDF)
+    sc.parallelize(Seq(idf)).saveAsObjectFile(Commons.ENRON_SPAM_IDF)
 
     val spamLabeled = spamTfidf map { v => LabeledPoint(0.0, v) }
     val hamLabeled = hamTfidf map { v => LabeledPoint(1.0, v) }
@@ -49,6 +53,7 @@ object SpamTrainerDriver extends App {
 
     println(s"\n\n\n\nAccuracy for spam model is: $accuracy\n\n\n\n")
 
+    Commons.deleteFolder(Commons.ENRON_SPAM_MODEL)
     model.save(sc, Commons.ENRON_SPAM_MODEL)
 
 }
