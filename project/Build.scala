@@ -40,7 +40,7 @@ object Build extends Build {
     )
 
     lazy val commonsSettings = rootSettings ++ Seq(
-        libraryDependencies ++= Seq()
+        libraryDependencies ++= Seq(hadoopClient)
     )
 
     lazy val unzipperSettings = rootSettings ++ Seq(
