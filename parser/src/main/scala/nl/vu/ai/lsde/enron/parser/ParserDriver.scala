@@ -22,7 +22,7 @@ object ParserDriver {
    
         val allParsed: RDD[MailBox] = allExtracted.map { case (mailbox, emails) =>
             val parsedEmails = emails flatMap { email =>
-                try Some(EmailParser.parse(email))
+                try Some(EmailParser.parse(email, custodians))
                 catch {
                     case e: EmailParsingException => None
                 }

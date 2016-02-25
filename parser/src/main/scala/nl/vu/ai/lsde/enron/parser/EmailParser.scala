@@ -15,7 +15,7 @@ object EmailParser {
     val originalMsg = ">?\\s? -----Original Message-----"
 
 
-    def parse(text: String): Email = {
+    def parse(text: String, custodians: Seq[Custodian]): Email = {
         // get headers and body
         val (headers, body) = text.split("\n\n") match {
             case s: Array[String] => (s.head.split("\n"), s.tail.mkString("\n\n"))
@@ -31,11 +31,11 @@ object EmailParser {
         if (date.isEmpty) throw new EmailParsingException(s"Unable to parse DATE header in email:\n$text")
 
         // get header entries
-        val from = filterHeaderList(headers, "From: ")
+        val from = filterHeaderList(headers, "From: ", custodians)
         if (from.isEmpty) throw new EmailParsingException(s"Unable to parse FROM header in email:\n$text")
-        val to = filterHeaderList(headers, "To: ")
-        val cc = filterHeaderList(headers, "Cc: ")
-        val bcc = filterHeaderList(headers, "Bcc: ")
+        val to = filterHeaderList(headers, "To: ", custodians)
+        val cc = filterHeaderList(headers, "Cc: ", custodians)
+        val bcc = filterHeaderList(headers, "Bcc: ", custodians)
         val subject = filterHeader(headers, "Subject: ")
         if (subject.isEmpty) throw new EmailParsingException(s"Unable to parse SUBJECT header in email:\n$text")
 
@@ -88,12 +88,32 @@ object EmailParser {
       * @param filter identifier of the entry to retrieve
       * @return list of entries related to @filter attribute
       */
-    private def filterHeaderList(headers: Seq[String], filter: String): Option[Seq[Custodian]] = {
+    private def filterHeaderList(headers: Seq[String], filter: String, custodians: Seq[Custodian]): Option[Seq[Custodian]] = {
         filterHeader(headers, filter) match {
             case Some(s) => {
-                // TODO: retrieve and return a Seq[Custodian] for this header string
-                Some(Seq(Custodian("foo", "foo", Option("foo"))))
-//                Some(s.split(",").map(_.trim))
+
+
+                val attribute = s.toLowerCase().trim.replaceAll("[^a-zA-Z@]","")
+
+                // gets the custodians actually present within the header attribute
+                val custodiansPresent = custodians.map { c =>
+                    // get clean names parts
+                    val nameParts = c.completeName.toLowerCase().split(" ").map(x => x.replaceAll("[^a-zA-Z]", ""))
+
+                    // TODO: implement special cases, now just the first surname
+                    // case0: multiple dashed surnames (i.e., Gilberth-Smith, Mims-Thurston)
+                    // case1: 121,123 have initials
+                    // case2: 143
+                    // case3: 145
+                    if(attribute.contains(nameParts(1))) {
+                        Some(c)
+                    }
+                }
+
+                Some(custodiansPresent)
+
+                // TODO: controllare che non sia rimasto nulla, altrimenti aggiugnere persona Unknow??
+
             }
             case _ => None
         }
