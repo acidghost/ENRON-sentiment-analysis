@@ -40,10 +40,8 @@ object Commons {
 
 
 case class Custodian(dirName: String,
-                     name: String,
-                     surname: String,
-                     role: Option[String],
-                     email: Option[Email])
+                     completeName: String,
+                     role: Option[String])
 
 case class Email(date: Timestamp,
                  from: Seq[Custodian],
