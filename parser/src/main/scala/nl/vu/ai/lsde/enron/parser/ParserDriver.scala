@@ -8,11 +8,15 @@ import org.apache.spark.{SparkConf, SparkContext}
 
 object ParserDriver extends App {
 
+    // USARE METODO MAIN E METTERE TUTTO IL CONTENUTO IN MAIN
+
     val appName = "ENRON-parser"
     val conf = new SparkConf().setAppName(appName)
     val sc = new SparkContext(conf)
 
     val allExtracted = sc.objectFile[(String, Seq[String])](Commons.ENRON_EXTRACTED_TXT)
+
+    // caricare il file csv, useare COLLECT!!!!!!!!!!!!!!!!!!!!!!!!!!! poi usare quella variabile dentro a map
 
     val allParsed: RDD[MailBox] = allExtracted.map { case (mailbox, emails) =>
         val parsedEmails = emails flatMap { email =>

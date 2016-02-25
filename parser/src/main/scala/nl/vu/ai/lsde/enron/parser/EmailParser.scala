@@ -2,7 +2,7 @@ package nl.vu.ai.lsde.enron.parser
 
 import java.text.SimpleDateFormat
 
-import nl.vu.ai.lsde.enron.Email
+import nl.vu.ai.lsde.enron.{Custodian, Email}
 
 object EmailParser {
 
@@ -88,9 +88,13 @@ object EmailParser {
       * @param filter identifier of the entry to retrieve
       * @return list of entries related to @filter attribute
       */
-    private def filterHeaderList(headers: Seq[String], filter: String): Option[Seq[String]] = {
+    private def filterHeaderList(headers: Seq[String], filter: String): Option[Seq[Custodian]] = {
         filterHeader(headers, filter) match {
-            case Some(s) => Some(s.split(",").map(_.trim))
+            case Some(s) => {
+                // TODO: retrieve and return a Seq[Custodian] for this header string
+                Some(Seq(Custodian("foo", "foo", "foo", None, None)))
+//                Some(s.split(",").map(_.trim))
+            }
             case _ => None
         }
     }

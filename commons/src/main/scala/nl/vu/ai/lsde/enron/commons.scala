@@ -4,7 +4,6 @@ import java.sql.Timestamp
 
 import org.apache.hadoop.fs.{Path, FileSystem}
 
-
 object Commons {
 
     val SOURCE_ENRON_DATA = "hdfs:///user/hannesm/lsde/enron"
@@ -19,6 +18,7 @@ object Commons {
     val ENRON_SPAM_MODEL = s"$LSDE_ENRON/spam-model"
     val ENRON_DATAFRAME_HAM = s"$LSDE_ENRON/dataframe-ham.parquet"
 
+
     def deleteFolder(path: String): Unit = {
         try { hdfs.delete(new Path(path), true) }
         catch { case _ : Throwable => }
@@ -28,21 +28,22 @@ object Commons {
         val hadoopConf = new org.apache.hadoop.conf.Configuration()
         FileSystem.get(new java.net.URI("hdfs:///"), hadoopConf)
     }
-
 }
 
-case class Person(name: String,
-                  email: Option[Email])
+
+
+case class Custodian(dirName: String,
+                     name: String,
+                     surname: String,
+                     role: Option[String],
+                     email: Option[Email])
 
 case class Email(date: Timestamp,
-                 from: Seq[Person],
-                 to: Seq[Person],
-                 cc: Seq[Person],
-                 bcc: Seq[Person],
+                 from: Seq[Custodian],
+                 to: Seq[Custodian],
+                 cc: Seq[Custodian],
+                 bcc: Seq[Custodian],
                  subject: String,
                  body: String)
 
 case class MailBox(name: String, emails: Seq[Email])
-
-
-
