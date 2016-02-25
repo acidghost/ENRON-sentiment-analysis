@@ -3,6 +3,9 @@ package nl.vu.ai.lsde.enron.spam
 import edu.stanford.nlp.process.Morphology
 
 
+/**
+  *  Preprocess a document to extract tokens applying tokenization, filtering and stemming.
+  */
 object Tokenizer {
 
     // scalastyle:off line.size.limit
@@ -12,13 +15,16 @@ object Tokenizer {
     val morph = new Morphology
 
     def tokenize(email: String): Seq[String] = {
+        // extract email body (remove first line which contains the subject)
         val emailBody = email.split("\n") match {
             case s: Array[String] if s.nonEmpty => s.tail.mkString(" ")
             case _ => return Seq()
         }
+        // split on whitespace, filter tokens and get stem
         emailBody.split(" ").filter(tokensToTake).map(morph.stem)
     }
 
+    // token must: not be a stop word, have length > 1 and not be all digits
     def tokensToTake(word: String) = !word.matches(stopWords) && word.length > 1 && !isAllDigits(word)
 
     def isAllDigits(word: String) = word forall Character.isDigit

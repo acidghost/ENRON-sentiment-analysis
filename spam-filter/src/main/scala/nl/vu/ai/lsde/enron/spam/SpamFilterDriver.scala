@@ -8,6 +8,10 @@ import org.apache.spark.sql.{Row, SQLContext, SaveMode}
 import org.apache.spark.{SparkConf, SparkContext}
 
 
+/**
+  * This program classifies the full ENRON corpus for spam/ham messages.
+  * It then saves a spam-filtered copy of the dataframe on disk.
+  */
 object SpamFilterDriver {
 
     def main (args: Array[String]) {
@@ -15,6 +19,7 @@ object SpamFilterDriver {
         val conf = new SparkConf().setAppName(appName)
         val sc = new SparkContext(conf)
 
+        // load TF, IDF and Naive Bayes models
         val tf = sc.objectFile[HashingTF](Commons.ENRON_SPAM_TF).first()
         val idf = sc.objectFile[IDFModel](Commons.ENRON_SPAM_IDF).first()
         val model = NaiveBayesModel.load(sc, Commons.ENRON_SPAM_MODEL)
@@ -23,7 +28,8 @@ object SpamFilterDriver {
         val bIdf = sc.broadcast[IDFModel](idf)
 
 
-        def tokenizeMailbox(row: Row): (String, Seq[(Email, Seq[String])]) = {
+        // maps a SQL Row to a TokenizedMailBox using the Tokenizer
+        def tokenizeMailbox(row: Row): TokenizedMailBox = {
             val emails = row.getSeq[Row](1).map { s: Row =>
                 Email(s.getTimestamp(0), s.getSeq[String](1),
                     s.getSeq[String](2), s.getSeq[String](3),
@@ -32,17 +38,21 @@ object SpamFilterDriver {
             (row.getString(0), emails.map(e => (e, Tokenizer.tokenize(e.body))))
         }
 
-        def toTF(x: (String, Seq[(Email, Seq[String])])): (String, Seq[(Email, Vector)]) = x match {
-            case tokenizedMailbox: (String, Seq[(Email, Seq[String])]) =>
+        // maps a TokenizedMailBox to a VectorizedMailBox where vectors are term frequencies
+        def toTF(x: TokenizedMailBox): VectorizedMailBox = {
+            case tokenizedMailbox: TokenizedMailBox =>
                 (tokenizedMailbox._1, tokenizedMailbox._2 map { e => (e._1, bTf.value.transform(e._2)) })
         }
 
-        def toTFIDF(x: (String, Seq[(Email, Vector)])): (String, Seq[(Email, Vector)]) = x match {
-            case tfMessages: (String, Seq[(Email, Vector)]) =>
+        // maps a VectorizedMailBox of TFs to a VectorizedMailBox of TF-IDFs
+        def toTFIDF(x: VectorizedMailBox): VectorizedMailBox = {
+            case tfMessages: VectorizedMailBox =>
                 (tfMessages._1, tfMessages._2 map { e => (e._1, bIdf.value.transform(e._2)) })
         }
 
-        def filterSpam(x: (String, Seq[(Email, Vector)])): MailBox = {
+        // classifies messages in VectorizedMailBox, filters out spam and returns a
+        // collection of MailBox of ham messages
+        def filterSpam(x: VectorizedMailBox): MailBox = {
             val emailsClassified = x._2.map(e => EmailLabeledVectorized(model.predict(e._2), e._2, e._1))
             val emailsHam = emailsClassified.filter(_.label == 1).map(_.email)
             MailBox(x._1, emailsHam)
@@ -52,12 +62,14 @@ object SpamFilterDriver {
         val sqlContext = new SQLContext(sc)
         import sqlContext.implicits._
 
+        // load full dataframe
         val df = sqlContext.read.parquet(Commons.ENRON_DATAFRAME)
 
         println("Dataset before spam filtering")
         df.select('name, 'emails).map(r => (r.getString(0), r.getSeq(1).length)).collect().foreach(println)
         println("\n")
 
+        // transform full dataframe into only ham dataframe
         val tokenized = df.select('name, 'emails).map(tokenizeMailbox)
         val tfMessages = tokenized.map(toTF)
         val tfidfMessages = tfMessages.map(toTFIDF)
@@ -67,10 +79,13 @@ object SpamFilterDriver {
         println("Dataset after spam filtering")
         hamDF.select('name, 'emails).map(r => (r.getString(0), r.getSeq(1).length)).collect().foreach(println)
 
+        // save ham dataframe on disk
         hamDF.write.mode(SaveMode.Overwrite).parquet(Commons.ENRON_DATAFRAME_HAM)
 
     }
 
+    type TokenizedMailBox = (String, Seq[(Email, Seq[String])])
+    type VectorizedMailBox = (String, Seq[(Email, Vector)])
     private case class EmailLabeledVectorized(label: Double, vector: Vector, email: Email)
 
 }

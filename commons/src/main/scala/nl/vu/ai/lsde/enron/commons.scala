@@ -19,11 +19,19 @@ object Commons {
     val ENRON_SPAM_MODEL = s"$LSDE_ENRON/spam-model"
     val ENRON_DATAFRAME_HAM = s"$LSDE_ENRON/dataframe-ham.parquet"
 
+    /**
+      * Delete a folder from HDFS.
+      * @param path The folder to be removed
+      */
     def deleteFolder(path: String): Unit = {
         try { hdfs.delete(new Path(path), true) }
         catch { case _ : Throwable => }
     }
 
+    /**
+      * Gets the HDFS filesystem
+      * @return The HDFS filesystem
+      */
     def hdfs: FileSystem = {
         val hadoopConf = new org.apache.hadoop.conf.Configuration()
         FileSystem.get(new java.net.URI("hdfs:///"), hadoopConf)
