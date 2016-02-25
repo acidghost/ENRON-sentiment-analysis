@@ -106,8 +106,8 @@ object EmailParser {
                     // case2: 143
                     // case3: 145
                     if(attribute.contains(nameParts(1))) {
-                        Some(c)
-                    }
+                        c
+                    } else c
                 }
 
                 Some(custodiansPresent)

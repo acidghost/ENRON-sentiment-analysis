@@ -1,5 +1,6 @@
 package nl.vu.ai.lsde.enron
 
+import java.io.InputStream
 import java.sql.Timestamp
 
 import org.apache.hadoop.fs.{Path, FileSystem}
@@ -12,7 +13,8 @@ object Commons {
     val LSDE_ENRON = s"$LSDE_USER_SPACE/enron"
     val ENRON_EXTRACTED_TXT = s"$LSDE_ENRON/extracted_txt"
     val ENRON_DATAFRAME = s"$LSDE_ENRON/dataframe.parquet"
-    val ENRON_CUSTODIANS = s"$LSDE_ENRON/custodians_def.csv"
+    val ENRON_CUSTODIANS_CSV_HDFS = s"$LSDE_ENRON/custodians_def.csv" //TODO: rm this, use the RES file instead!
+    val ENRON_CUSTODIANS_CSV_RES = "/custodians_def.csv"
     val ENRON_SPAM_DATA = s"$LSDE_ENRON/spam-dataset"
     val ENRON_SPAM_TF = s"$LSDE_ENRON/spam-tf"
     val ENRON_SPAM_IDF = s"$LSDE_ENRON/spam-idf"
@@ -21,6 +23,7 @@ object Commons {
 
     /**
       * Delete a folder from HDFS.
+      *
       * @param path The folder to be removed
       */
     def deleteFolder(path: String): Unit = {
@@ -30,15 +33,28 @@ object Commons {
 
     /**
       * Gets the HDFS filesystem
+      *
       * @return The HDFS filesystem
       */
     def hdfs: FileSystem = {
         val hadoopConf = new org.apache.hadoop.conf.Configuration()
         FileSystem.get(new java.net.URI("hdfs:///"), hadoopConf)
     }
+
+    /**
+      * Gets the ENRON corupus v2 custodians
+      * @return The custodians
+      */
+    def getCustodians: Seq[Custodian] = {
+        val stream : InputStream = getClass.getResourceAsStream(Commons.ENRON_CUSTODIANS_CSV_RES)
+        val lines = scala.io.Source.fromInputStream(stream).getLines
+
+        lines.map{line =>
+            val items = line.split(",")
+            Custodian(items(0), items(1), Option(items(2)))
+        }.toSeq
+    }
 }
-
-
 
 case class Custodian(dirName: String,
                      completeName: String,
@@ -53,3 +69,4 @@ case class Email(date: Timestamp,
                  body: String)
 
 case class MailBox(name: String, emails: Seq[Email])
+

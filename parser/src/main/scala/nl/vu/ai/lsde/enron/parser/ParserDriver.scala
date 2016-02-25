@@ -17,8 +17,7 @@ object ParserDriver {
         val allExtracted = sc.objectFile[(String, Seq[String])](Commons.ENRON_EXTRACTED_TXT)
 
         // get custodians from csv file
-        val csv = sc.textFile(Commons.ENRON_CUSTODIANS_CSV).map{line => line.split(",")}
-        var custodians = csv.map{record => Custodian(record(0),record(1),Option(record(2)))}.collect().toSeq
+        var custodians = Commons.getCustodians
    
         val allParsed: RDD[MailBox] = allExtracted.map { case (mailbox, emails) =>
             val parsedEmails = emails flatMap { email =>
