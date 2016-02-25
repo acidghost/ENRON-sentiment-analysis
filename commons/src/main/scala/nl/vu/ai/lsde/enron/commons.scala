@@ -42,7 +42,7 @@ object Commons {
     }
 
     /**
-      * Gets the ENRON corupus v2 custodians
+      * Gets the ENRON corpus v2 custodians from the local CSV resource
       * @return The custodians
       */
     def getCustodians: Seq[Custodian] = {

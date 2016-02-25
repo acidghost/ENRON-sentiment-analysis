@@ -91,8 +91,7 @@ object EmailParser {
     private def filterHeaderList(headers: Seq[String], filter: String, custodians: Seq[Custodian]): Option[Seq[Custodian]] = {
         filterHeader(headers, filter) match {
             case Some(s) => {
-
-
+                
                 val attribute = s.toLowerCase().trim.replaceAll("[^a-zA-Z@]","")
 
                 // gets the custodians actually present within the header attribute
