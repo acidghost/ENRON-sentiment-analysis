@@ -47,12 +47,12 @@ object Commons {
       */
     def getCustodians: Seq[Custodian] = {
         val stream : InputStream = getClass.getResourceAsStream(Commons.ENRON_CUSTODIANS_CSV_RES)
-        val lines = scala.io.Source.fromInputStream(stream).getLines
+        val lines = scala.io.Source.fromInputStream(stream).getLines.toSeq
 
         lines.map{line =>
             val items = line.split(",")
             Custodian(items(0), items(1), Option(items(2)))
-        }.toSeq
+        }
     }
 }
 

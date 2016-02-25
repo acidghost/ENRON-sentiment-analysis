@@ -89,32 +89,42 @@ object EmailParser {
       * @return list of entries related to @filter attribute
       */
     private def filterHeaderList(headers: Seq[String], filter: String, custodians: Seq[Custodian]): Option[Seq[Custodian]] = {
+        println("filter: "+ filter)
+
+        // get the useful part of the attribute
         filterHeader(headers, filter) match {
             case Some(s) => {
-                
+
+                // clean the attribute
                 val attribute = s.toLowerCase().trim.replaceAll("[^a-zA-Z@]","")
+                println("s: " + s)
+                println("attribute: " + attribute)
 
                 // gets the custodians actually present within the header attribute
-                val custodiansPresent = custodians.map { c =>
-                    // get clean names parts
-                    val nameParts = c.completeName.toLowerCase().split(" ").map(x => x.replaceAll("[^a-zA-Z]", ""))
+                val custodiansPresent = custodians.flatMap ( c => checkCustodianInString(c, attribute))
 
-                    // TODO: implement special cases, now just the first surname
-                    // case0: multiple dashed surnames (i.e., Gilberth-Smith, Mims-Thurston)
-                    // case1: 121,123 have initials
-                    // case2: 143
-                    // case3: 145
-                    if(attribute.contains(nameParts(1))) {
-                        c
-                    } else c
-                }
-
+                println("custodiansPresent:")
+                custodiansPresent foreach println
+                println()
                 Some(custodiansPresent)
-
                 // TODO: controllare che non sia rimasto nulla, altrimenti aggiugnere persona Unknow??
-
             }
             case _ => None
+        }
+    }
+
+    private def checkCustodianInString(custodian: Custodian, text: String) : Option[Custodian] = {
+        // get clean names parts
+        val nameParts = custodian.completeName.toLowerCase().split(" ").map(x => x.replaceAll("[^a-zA-Z]", ""))
+
+        // TODO: implement special cases, now just the first surname
+        // case0: multiple dashed surnames (i.e., Gilberth-Smith, Mims-Thurston)
+        // case1: 121,123 have initials
+        // case2: 143
+        // case3: 145
+        nameParts.length match {
+            case 2 => if(text.contains(nameParts(1))) Some(custodian) else None
+            case 3 => if(text.contains(nameParts(2))) Some(custodian) else None
         }
     }
 
