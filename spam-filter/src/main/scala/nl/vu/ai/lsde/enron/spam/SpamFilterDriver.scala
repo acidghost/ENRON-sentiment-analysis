@@ -53,8 +53,8 @@ object SpamFilterDriver {
         // classifies messages in VectorizedMailBox, filters out spam and returns a
         // collection of MailBox of ham messages
         def filterSpam(x: VectorizedMailBox): MailBox = {
-            val emailsClassified = x._2.map(e => EmailLabeledVectorized(model.predict(e._2), e._2, e._1))
-            val emailsHam = emailsClassified.filter(_.label == 1).map(_.email)
+            val emailsClassified = x._2.map(e => EmailClassified(model.predictProbabilities(e._2)(0), e._1))
+            val emailsHam = emailsClassified.filter(_.spamProb < .9).map(_.email)
             MailBox(x._1, emailsHam)
         }
 
@@ -86,6 +86,6 @@ object SpamFilterDriver {
 
     type TokenizedMailBox = (String, Seq[(Email, Seq[String])])
     type VectorizedMailBox = (String, Seq[(Email, Vector)])
-    private case class EmailLabeledVectorized(label: Double, vector: Vector, email: Email)
+    private case class EmailClassified(spamProb: Double, email: Email)
 
 }
