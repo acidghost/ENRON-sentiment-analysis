@@ -1,24 +1,25 @@
 package nl.vu.ai.lsde.enron.parser
 
 import nl.vu.ai.lsde.enron.parser.EmailParser.EmailParsingException
-import nl.vu.ai.lsde.enron.{Commons, MailBox}
+import nl.vu.ai.lsde.enron.{Custodian, Commons, MailBox}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{SQLContext, SaveMode}
 import org.apache.spark.{SparkConf, SparkContext}
 
 object ParserDriver {
 
+    val appName = "ENRON-parser"
+    val conf = new SparkConf().setAppName(appName)
+    val sc = new SparkContext(conf)
+
     // scalastyle:off
     def main (args: Array[String]) {
-        
-        val appName = "ENRON-parser"
-        val conf = new SparkConf().setAppName(appName)
-        val sc = new SparkContext(conf)
-
         val allExtracted = sc.objectFile[(String, Seq[String])](Commons.ENRON_EXTRACTED_TXT)
 
-        // caricare il file csv, useare COLLECT!!!!!!!!!!!!!!!!!!!!!!!!!!! poi usare quella variabile dentro a map
-
+        // get custodians from csv file
+        val csv = sc.textFile(Commons.ENRON_CUSTODIANS_CSV).map{line => line.split(",")}
+        var custodians = csv.map{record => Custodian(record(0),record(1),Option(record(2)))}.collect().toSeq
+   
         val allParsed: RDD[MailBox] = allExtracted.map { case (mailbox, emails) =>
             val parsedEmails = emails flatMap { email =>
                 try Some(EmailParser.parse(email))

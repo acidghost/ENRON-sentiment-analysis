@@ -12,6 +12,7 @@ object Commons {
     val LSDE_ENRON = s"$LSDE_USER_SPACE/enron"
     val ENRON_EXTRACTED_TXT = s"$LSDE_ENRON/extracted_txt"
     val ENRON_DATAFRAME = s"$LSDE_ENRON/dataframe.parquet"
+    val ENRON_CUSTODIANS_CSV = s"$LSDE_ENRON/custodians_def.csv"
     val ENRON_SPAM_DATA = s"$LSDE_ENRON/spam-dataset"
     val ENRON_SPAM_TF = s"$LSDE_ENRON/spam-tf"
     val ENRON_SPAM_IDF = s"$LSDE_ENRON/spam-idf"

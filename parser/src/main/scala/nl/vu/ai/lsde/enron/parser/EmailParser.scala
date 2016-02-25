@@ -92,7 +92,7 @@ object EmailParser {
         filterHeader(headers, filter) match {
             case Some(s) => {
                 // TODO: retrieve and return a Seq[Custodian] for this header string
-                Some(Seq(Custodian("foo", "foo", "foo", None, None)))
+                Some(Seq(Custodian("foo", "foo", Option("foo"))))
 //                Some(s.split(",").map(_.trim))
             }
             case _ => None
