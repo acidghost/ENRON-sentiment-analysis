@@ -12,13 +12,17 @@ object Commons {
     val LSDE_USER_SPACE = "hdfs:///user/lsde03"
     val LSDE_ENRON = s"$LSDE_USER_SPACE/enron"
     val ENRON_EXTRACTED_TXT = s"$LSDE_ENRON/extracted_txt"
-    val ENRON_DATAFRAME = s"$LSDE_ENRON/dataframe.parquet"
+
+    val ENRON_FULL_DATAFRAME = s"$LSDE_ENRON/full_df.parquet"
+    val ENRON_SENTIMENT_DATAFRAME = s"$LSDE_ENRON/sentiment_df.parquet"
+
     val ENRON_CUSTODIANS_CSV_RES = "/custodians_def.csv"
-    val ENRON_SPAM_DATA = s"$LSDE_ENRON/spam-dataset"
-    val ENRON_SPAM_TF = s"$LSDE_ENRON/spam-tf"
-    val ENRON_SPAM_IDF = s"$LSDE_ENRON/spam-idf"
-    val ENRON_SPAM_MODEL = s"$LSDE_ENRON/spam-model"
-    val ENRON_DATAFRAME_HAM = s"$LSDE_ENRON/dataframe-ham.parquet"
+
+    val ENRON_SPAM_DATA = s"$LSDE_ENRON/spam_dataset"
+    val ENRON_SPAM_TF = s"$LSDE_ENRON/spam_tf"
+    val ENRON_SPAM_IDF = s"$LSDE_ENRON/spam_idf"
+    val ENRON_SPAM_MODEL = s"$LSDE_ENRON/spam_model"
+    val ENRON_DATAFRAME_HAM = s"$LSDE_ENRON/ham_df.parquet"
 
     /**
       * Delete a folder from HDFS.
@@ -81,3 +85,8 @@ case class Email(date: Timestamp, from: Seq[Custodian], to: Seq[Custodian], cc: 
 
 case class MailBox(name: String, emails: Seq[Email])
 
+
+case class EmailWithSentiment(date: Timestamp, from: Seq[Custodian], to: Seq[Custodian],
+                              subject: String, sentiment: String)
+
+case class MailBoxWithSentiment(name: String, emails: Seq[EmailWithSentiment])

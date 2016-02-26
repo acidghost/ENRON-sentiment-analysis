@@ -63,7 +63,7 @@ object SpamFilterDriver {
         import sqlContext.implicits._
 
         // load full dataframe
-        val df = sqlContext.read.parquet(Commons.ENRON_DATAFRAME)
+        val df = sqlContext.read.parquet(Commons.ENRON_FULL_DATAFRAME)
 
         println("Dataset before spam filtering")
         df.select('name, 'emails).map(r => (r.getString(0), r.getSeq(1).length)).collect().foreach(println)
