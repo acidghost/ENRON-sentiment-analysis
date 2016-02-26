@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 unzipper="unzipper/assembly"
-etl="etl/assembly etl/assemblyPackageDependency"
+etl="etl/assembly"
 spam_filter="spam-filter/assembly spam-filter/assemblyPackageDependency"
 
 projects=(${unzipper} ${etl} ${spam_filter})
