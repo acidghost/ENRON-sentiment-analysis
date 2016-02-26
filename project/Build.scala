@@ -22,7 +22,7 @@ object BuildSettings {
 
     val coreNLPVersion = "3.4.1"
     val coreNLP = "edu.stanford.nlp" % "stanford-corenlp" % coreNLPVersion
-    val coreNLPModels = "edu.stanford.nlp" % "stanford-corenlp" % coreNLPVersion classifier "models-english"
+    val coreNLPModels = "edu.stanford.nlp" % "stanford-corenlp" % coreNLPVersion classifier "models"
 
     val protobuf = "com.google.protobuf" % "protobuf-java" % "2.6.1"
 }
@@ -48,9 +48,12 @@ object Build extends Build {
         assemblyJarName in assembly := "unzipper.jar"
     )
 
-    lazy val parserSettings = rootSettings ++ Seq(
-        libraryDependencies ++= Seq(sparkCore, hadoopClient, sparkSql),
-        assemblyJarName in assembly := "parser.jar"
+    lazy val etlSettings = rootSettings ++ Seq(
+        libraryDependencies ++= Seq(sparkCore, hadoopClient, sparkSql, protobuf, coreNLP, coreNLPModels),
+        assemblyOption in assembly := (assemblyOption in assembly).value.copy(includeDependency = false),
+        assembly <<= assembly dependsOn assemblyPackageDependency,
+        assemblyJarName in assemblyPackageDependency := "etl-deps.jar",
+        assemblyJarName in assembly := "etl.jar"
     )
 
     lazy val spamFilterSettings = rootSettings ++ Seq(
@@ -62,13 +65,13 @@ object Build extends Build {
     )
 
 
-    lazy val root = Project(id = "root", base = file("."), settings = rootSettings).aggregate(unzipper, parser, spamFilter)
+    lazy val root = Project(id = "root", base = file("."), settings = rootSettings).aggregate(unzipper, etl, spamFilter)
 
     lazy val commons = Project(id = "commons", base = file("./commons"), settings = commonsSettings)
 
     lazy val unzipper = Project(id = "unzipper", base = file("./unzipper"), settings = unzipperSettings).dependsOn(commons)
 
-    lazy val parser = Project(id = "parser", base = file("./parser"), settings = parserSettings).dependsOn(commons)
+    lazy val etl = Project(id = "etl", base = file("./etl"), settings = etlSettings).dependsOn(commons)
 
     lazy val spamFilter = Project(id = "spam-filter", base = file("./spam-filter"), settings = spamFilterSettings).dependsOn(commons)
 

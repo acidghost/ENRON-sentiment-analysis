@@ -1,9 +1,9 @@
-package nl.vu.ai.lsde.enron.parser
+package nl.vu.ai.lsde.enron.etl
 
 import nl.vu.ai.lsde.enron.Commons
 
 // run with:
-// sbt parser/test:run
+// sbt etl/test:run
 object ParserTest {
 
     def main (args: Array[String]) {

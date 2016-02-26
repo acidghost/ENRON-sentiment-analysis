@@ -1,14 +1,14 @@
-package nl.vu.ai.lsde.enron.parser
+package nl.vu.ai.lsde.enron.etl
 
-import nl.vu.ai.lsde.enron.parser.EmailParser.EmailParsingException
+import nl.vu.ai.lsde.enron.etl.EmailParser.EmailParsingException
 import nl.vu.ai.lsde.enron.{Commons, MailBox}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{SQLContext, SaveMode}
 import org.apache.spark.{SparkConf, SparkContext}
 
-object ParserDriver {
+object ETLDriver {
 
-    val appName = "ENRON-parser"
+    val appName = "ENRON-etl"
     val conf = new SparkConf().setAppName(appName)
     val sc = new SparkContext(conf)
 

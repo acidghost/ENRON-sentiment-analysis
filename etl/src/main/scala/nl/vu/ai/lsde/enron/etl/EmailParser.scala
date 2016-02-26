@@ -1,4 +1,4 @@
-package nl.vu.ai.lsde.enron.parser
+package nl.vu.ai.lsde.enron.etl
 
 import java.text.SimpleDateFormat
 

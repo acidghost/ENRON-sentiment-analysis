@@ -1,6 +1,6 @@
 package nl.vu.ai.lsde.enron.spam
 
-import nl.vu.ai.lsde.enron.{Commons, Email, MailBox}
+import nl.vu.ai.lsde.enron.{Custodian, Commons, Email, MailBox}
 import org.apache.spark.mllib.classification.NaiveBayesModel
 import org.apache.spark.mllib.feature.{HashingTF, IDFModel}
 import org.apache.spark.mllib.linalg.Vector
@@ -31,21 +31,21 @@ object SpamFilterDriver {
         // maps a SQL Row to a TokenizedMailBox using the Tokenizer
         def tokenizeMailbox(row: Row): TokenizedMailBox = {
             val emails = row.getSeq[Row](1).map { s: Row =>
-                Email(s.getTimestamp(0), s.getSeq[String](1),
-                    s.getSeq[String](2), s.getSeq[String](3),
-                    s.getSeq[String](4), s.getString(5), s.getString(6))
+                Email(s.getTimestamp(0), s.getSeq[Custodian](1),
+                    s.getSeq[Custodian](2), s.getSeq[Custodian](3),
+                    s.getSeq[Custodian](4), s.getString(5), s.getString(6))
             }
             (row.getString(0), emails.map(e => (e, Tokenizer.tokenize(e.body))))
         }
 
         // maps a TokenizedMailBox to a VectorizedMailBox where vectors are term frequencies
-        def toTF(x: TokenizedMailBox): VectorizedMailBox = {
+        def toTF(x: TokenizedMailBox): VectorizedMailBox = x match {
             case tokenizedMailbox: TokenizedMailBox =>
                 (tokenizedMailbox._1, tokenizedMailbox._2 map { e => (e._1, bTf.value.transform(e._2)) })
         }
 
         // maps a VectorizedMailBox of TFs to a VectorizedMailBox of TF-IDFs
-        def toTFIDF(x: VectorizedMailBox): VectorizedMailBox = {
+        def toTFIDF(x: VectorizedMailBox): VectorizedMailBox = x match {
             case tfMessages: VectorizedMailBox =>
                 (tfMessages._1, tfMessages._2 map { e => (e._1, bIdf.value.transform(e._2)) })
         }
