@@ -1,13 +1,11 @@
 package nl.vu.ai.lsde.enron.parser
 
-import java.io.InputStream
 import nl.vu.ai.lsde.enron.Commons
 
 // run with:
 // sbt parser/test:run
-object Test {
+object ParserTest {
 
-    // scalastyle:off
     def main (args: Array[String]) {
         // scalastyle:off line.size.limit
         val tests = Seq(
@@ -23,25 +21,10 @@ object Test {
             "Date: Thu, 21 Dec 2000 03:20:00 -0800 (PST)\nFrom: Judy Townsend\nTo: Chris Germany\nSubject: FW: Service Request\nX-SDOC: 1093234\nX-ZLID: zl-edrm-enron-v2-townsend-j-560.eml\n\n---------------------- Forwarded by Judy Townsend/HOU/ECT on 12/21/2000 11:13 \nAM ---------------------------\n\n\nCraig Breslau\n12/19/2000 01:25 PM\nTo: Judy Townsend/HOU/ECT@ECT, Victoria Versen/HOU/ECT@ECT\ncc:  \nSubject: FW: Service Request\n\n\n---------------------- Forwarded by Craig Breslau/HOU/ECT on 12/19/2000 01:24 \nPM ---------------------------\n\n\n\"Kilby, Daniel\" <KilbyD@kochind.com> on 12/12/2000 09:51:07 AM\nTo: \"'craig.breslau@enron.com'\" <craig.breslau@enron.com>\ncc:  \nSubject: FW: Service Request\n\n\nCraig,\n\nAttached is Gateway's service request form. You will need to complete this\ndocument as follows in order for us to post the deal (which takes 5 days).\nIn the interim I will work on the Letter Agreement that is the formal\ntransportation contract.\n\nPage 1 - Fill out everything with the exception of 1a.\nPage 2 - New Service Section: 1, 2 & 3.\n             Rate Information: 1, 2, 3 & 4.\nPage 3 - Signature Info.\nPage 4 - As Needed.\n\n> -----Original Message-----\n> From: Engler, Cheryl\n> Sent: Tuesday,December 12,2000 9:34 AM\n> To: Kilby, Daniel\n> Subject: Service Request\n> Importance: High\n>\n>  <<SER_REQ 0309.doc>>\n> Cheryl Engler\n> Asset Modification Manager\n> Koch Gateway Pipeline Co.\n> * englerc@kochind.com\n> * (713) 544-4739\n> *  (713) 544-9170\n>\n\n - SER_REQ 0309.doc\n---------------------- Forwarded by Craig Breslau/HOU/ECT on 12/19/2000 01:24 \nPM ---------------------------\n\n\n\"Kilby, Daniel\" <KilbyD@kochind.com> on 12/15/2000 08:45:45 AM\nTo: \"'craig.breslau@enron.com'\" <craig.breslau@enron.com>\ncc:  \nSubject: Ormet Letter Agreement\n\n\nCraig, please find attached a rough draft of the letter agreement for the\nOrmet Deal. We need get rolling on this so let me know your thoughts on this\nand the service request (sent earlier this week) as soon as you can.\n\nThanks.\n\n <<Enron-OrmetLetterAgreement.doc>>\n\n - Enron-OrmetLetterAgreement.doc\n\n\n\n\n***********\nEDRM Enron Email Data Set has been produced in EML, PST and NSF format by ZL Technologies, Inc. This Data Set is licensed under a Creative Commons Attribution 3.0 United States License <http://creativecommons.org/licenses/by/3.0/us/> . To provide attribution, please cite to \"ZL Technologies, Inc. (http://www.zlti.com).\"\n***********\nAttachment: SER_REQ 0309.doc type=application/msword\nAttachment: Enron-OrmetLetterAgreement.doc type=application/msword",
             "Date: Mon, 14 Jan 2002 22:00:00 -0800 (PST)\nSubject: TE Storage Inventory Levels\nFrom: INFOPOST@DUKE-ENERGY.COM@ENRON <IMCEANOTES-INFOPOST+40DUKE-ENERGY+2ECOM+40ENRON@ENRON.com>\nTo: INFOPOST@DUKE-ENERGY.COM\nX-SDOC: 105904\nX-ZLID: zl-edrm-enron-v2-townsend-j-46.eml\n\nOn  November 15, 2001, Texas Eastern Transmission, LP (\"Texas  Eastern\")\nnotified firm storage customers that, as required by the Federal  Energy\nRegulatory Commission's November 30, 1994 order, in Docket No.  RP95-15,\nTexas  Eastern would monitor customer storage activity and  would  issue\ncustomer-specific Operational Flow Orders (\"OFOs\") prior to the issuance\nof a system-wide storage OFO pursuant to Section 4.3  (L) of the General\nTerms  and Conditions of Texas Eastern's  FERC Gas Tariff, Sixth Revised\nVolume No. 1    (\"Tariff\").\n\nAs indicated in Texas Eastern's November 15, 2001 letter, the need for a\ncustomer  specific  OFO  would be determined based  on  such  customer's\nvariance  from  the suggested storage withdrawal plan specified  in  the\nNovember  15, 2001 mailing.  The Withdrawal Plan indicates  the  maximum\nrecommended storage withdrawals for each of four (4) withdrawal  periods\nand  is  designed to reflect in the aggregate Texas Eastern's historical\nutilization of its storage facilities prior to the implementation of the\nCommission's Order No. 636\n\nTexas Eastern is not issuing a Customer-Specific OFO at this time due to\nthe  high  aggregate storage position at 12/31/2001. Texas Eastern  will\ncontinue to monitor individual customer storage activity and may need to\nissue  customer-specific  OFOs  if  required  by  future  circumstances.\nCustomer-specific OFOs will be based upon each customer's variance  from\nthe suggested storage withdrawal plan provided to you and the other firm\nstorage customers by letter dated November 15, 2001.\n\nIf  you  have  any  questions  regarding the foregoing  matters,  please\ncontact your Account Manager.\n\n\n\n\n\n\n*******************************************************************\n\nNOTE:\n\nDuke Energy Gas Transmission respects your online time and privacy.\nYou have received this email because you elected to subscribe. To\nunsubscribe, login to the E-mail Notification Subscription page at\nhttp://www.link.duke-energy.com/script2/Notification.asp\nuncheck the appropriate checkbox, and click the Submit button.\n\n***********\nEDRM Enron Email Data Set has been produced in EML, PST and NSF format by ZL Technologies, Inc. This Data Set is licensed under a Creative Commons Attribution 3.0 United States License <http://creativecommons.org/licenses/by/3.0/us/> . To provide attribution, please cite to \"ZL Technologies, Inc. (http://www.zlti.com).\"\n***********"
         )
-
-        val tests2 = Seq(
-            "Date: Tue, 20 Nov 2001 08:35:29 -0800 (PST)\nFrom: Townsend, Judy </O=ENRON/OU=NA/CN=RECIPIENTS/CN=JTOWNSE>\nTo: Fletcher, Brenda H. </O=ENRON/OU=NA/CN=RECIPIENTS/CN=Bfletch>\nSubject: RE: TETCO invoice - October production\nX-SDOC: 1357608\nX-ZLID: zl-edrm-enron-v2-townsend-j-649.eml\n\nsorry,  tetco is right....  .035  Do I need to change the ticket?\n\n -----Original Message-----\nFrom: \tFletcher, Brenda H.  \nSent:\tTuesday, November 20, 2001 10:15 AM\nTo:\tTownsend, Judy\nSubject:\tTETCO invoice - October production\n\nContract 910262, Deal # 1072014\n\nPipe invoiced a demand rate of .035 ($1.085) on volume of 20,000.  The rate in Sitara is .03.  The amount of variance is  $3,100.\n\nWhich is correct?\n\nThanks,\nBrenda\n\n***********\nEDRM Enron Email Data Set has been produced in EML, PST and NSF format by ZL Technologies, Inc. This Data Set is licensed under a Creative Commons Attribution 3.0 United States License <http://creativecommons.org/licenses/by/3.0/us/> . To provide attribution, please cite to \"ZL Technologies, Inc. (http://www.zlti.com).\"\n***********"
-        )
-
         // scalastyle:on line.size.limit
 
-//        println(tests2(0))
-//        println("---------------\n---------------\n---------------\n")
 
-        var custodians = Commons.getCustodians
-
-        var parsed = tests.map { testMail =>
-            EmailParser.parse(testMail, custodians)
-        }
-//        parsed foreach println
-//        println(parsed(0).to)
-//        println(parsed(0).bcc)
-//        println(parsed(0).cc)
-//        println(parsed(0).from)
+        val custodians = Commons.getCustodians
+        tests.map(EmailParser.parse(_, custodians)).foreach(println)
     }
 }

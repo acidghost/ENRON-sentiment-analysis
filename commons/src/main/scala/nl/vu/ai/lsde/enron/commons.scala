@@ -13,7 +13,6 @@ object Commons {
     val LSDE_ENRON = s"$LSDE_USER_SPACE/enron"
     val ENRON_EXTRACTED_TXT = s"$LSDE_ENRON/extracted_txt"
     val ENRON_DATAFRAME = s"$LSDE_ENRON/dataframe.parquet"
-    val ENRON_CUSTODIANS_CSV_HDFS = s"$LSDE_ENRON/custodians_def.csv" //TODO: rm this, use the RES file instead!
     val ENRON_CUSTODIANS_CSV_RES = "/custodians_def.csv"
     val ENRON_SPAM_DATA = s"$LSDE_ENRON/spam-dataset"
     val ENRON_SPAM_TF = s"$LSDE_ENRON/spam-tf"
@@ -49,24 +48,36 @@ object Commons {
         val stream : InputStream = getClass.getResourceAsStream(Commons.ENRON_CUSTODIANS_CSV_RES)
         val lines = scala.io.Source.fromInputStream(stream).getLines.toSeq
 
-        lines.map{line =>
+        lines.map { line =>
             val items = line.split(",")
-            Custodian(items(0), items(1), Option(items(2)))
+            val role = items(2) match {
+                case s: String if s.contains("N/A") => None
+                case s: String => Some(s)
+            }
+            Custodian(items(0), items(1), role)
         }
     }
 }
 
-case class Custodian(dirName: String,
-                     completeName: String,
-                     role: Option[String])
+case class Custodian(dirName: String, completeName: String, role: Option[String]) {
 
-case class Email(date: Timestamp,
-                 from: Seq[Custodian],
-                 to: Seq[Custodian],
-                 cc: Seq[Custodian],
-                 bcc: Seq[Custodian],
-                 subject: String,
-                 body: String)
+    override def toString: String = s"$completeName ($dirName${if (role.isDefined) s", ${role.get}" else ""})"
+}
+
+
+case class Email(date: Timestamp, from: Seq[Custodian], to: Seq[Custodian], cc: Seq[Custodian],
+                 bcc: Seq[Custodian], subject: String, body: String) {
+
+    override def toString: String =
+        s"Date: $date\n" +
+        s"From: ${from.mkString(", ")}\n" +
+        s"To: ${to.mkString(", ")}\n" +
+        s"Cc: ${cc.mkString(", ")}\n" +
+        s"Bcc: ${bcc.mkString(", ")}\n" +
+        s"Subject: $subject\n\n$body\n"
+
+}
+
 
 case class MailBox(name: String, emails: Seq[Email])
 

@@ -33,9 +33,11 @@ object EmailParser {
         // get header entries
         val from = filterHeaderList(headers, "From: ", custodians)
         if (from.isEmpty) throw new EmailParsingException(s"Unable to parse FROM header in email:\n$text")
+
         val to = filterHeaderList(headers, "To: ", custodians)
         val cc = filterHeaderList(headers, "Cc: ", custodians)
         val bcc = filterHeaderList(headers, "Bcc: ", custodians)
+
         val subject = filterHeader(headers, "Subject: ")
         if (subject.isEmpty) throw new EmailParsingException(s"Unable to parse SUBJECT header in email:\n$text")
 
@@ -89,26 +91,16 @@ object EmailParser {
       * @return list of entries related to @filter attribute
       */
     private def filterHeaderList(headers: Seq[String], filter: String, custodians: Seq[Custodian]): Option[Seq[Custodian]] = {
-        println("filter: "+ filter)
-
         // get the useful part of the attribute
         filterHeader(headers, filter) match {
-            case Some(s) => {
-
+            case Some(s) =>
                 // clean the attribute
                 val attribute = s.toLowerCase().trim.replaceAll("[^a-zA-Z@]","")
-                println("s: " + s)
-                println("attribute: " + attribute)
 
                 // gets the custodians actually present within the header attribute
-                val custodiansPresent = custodians.flatMap ( c => checkCustodianInString(c, attribute))
-
-                println("custodiansPresent:")
-                custodiansPresent foreach println
-                println()
+                val custodiansPresent = custodians.flatMap(checkCustodianInString(_, attribute))
                 Some(custodiansPresent)
-                // TODO: controllare che non sia rimasto nulla, altrimenti aggiugnere persona Unknow??
-            }
+
             case _ => None
         }
     }
@@ -123,15 +115,13 @@ object EmailParser {
             // il solo cognome non è identificativo, nemmeno nel formato cognome@enron
             // cognome AND nome
             // cognome AND nome_initial... esiste veramente? lo ignoriamo?
-            case 2 => {
+            case 2 =>
                 if(text.contains(surname) && text.contains(name)) Some(custodian) else None
-            }
             // case 3 search for both surname/name pairs
-            case 3 => {
+            case 3 =>
                 val surname_2 = nameParts(2)
                 if((text.contains(surname) && text.contains(name)) ||
                     (text.contains(surname_2) && text.contains(name))) Some(custodian) else None
-            }
         }
         // NOTE: CHANGELOG of the custodians file:
         // multiple dashed surnames (i.e., Gilberth-Smith, Mims-Thurston) "-" have been replaced by a " ", note that Smith has omonimi

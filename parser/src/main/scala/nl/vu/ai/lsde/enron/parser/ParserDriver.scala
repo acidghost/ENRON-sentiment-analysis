@@ -1,7 +1,7 @@
 package nl.vu.ai.lsde.enron.parser
 
 import nl.vu.ai.lsde.enron.parser.EmailParser.EmailParsingException
-import nl.vu.ai.lsde.enron.{Custodian, Commons, MailBox}
+import nl.vu.ai.lsde.enron.{Commons, MailBox}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{SQLContext, SaveMode}
 import org.apache.spark.{SparkConf, SparkContext}
@@ -12,12 +12,11 @@ object ParserDriver {
     val conf = new SparkConf().setAppName(appName)
     val sc = new SparkContext(conf)
 
-    // scalastyle:off
     def main (args: Array[String]) {
         val allExtracted = sc.objectFile[(String, Seq[String])](Commons.ENRON_EXTRACTED_TXT)
 
         // get custodians from csv file
-        var custodians = Commons.getCustodians
+        val custodians = Commons.getCustodians
    
         val allParsed: RDD[MailBox] = allExtracted.map { case (mailbox, emails) =>
             val parsedEmails = emails flatMap { email =>
