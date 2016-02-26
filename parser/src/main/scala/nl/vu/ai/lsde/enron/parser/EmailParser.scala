@@ -115,19 +115,31 @@ object EmailParser {
 
     private def checkCustodianInString(custodian: Custodian, text: String) : Option[Custodian] = {
         // get clean names parts
-        val nameParts = custodian.completeName.toLowerCase().split(" ").map(x => x.replaceAll("[^a-zA-Z]", ""))
+        val nameParts = custodian.completeName.toLowerCase().split(" ")
+        val name = nameParts(0)
+        val surname = nameParts(1)
 
-        // TODO: implement special cases, now just the first surname
-        // case0: multiple dashed surnames (i.e., Gilberth-Smith, Mims-Thurston)
-        // case1: 121,123 have initials
-        // case2: 143
-        // case3: 145
         nameParts.length match {
-            case 2 => if(text.contains(nameParts(1))) Some(custodian) else None
-            case 3 => if(text.contains(nameParts(2))) Some(custodian) else None
+            // il solo cognome non è identificativo, nemmeno nel formato cognome@enron
+            // cognome AND nome
+            // cognome AND nome_initial... esiste veramente? lo ignoriamo?
+            case 2 => {
+                if(text.contains(surname) && text.contains(name)) Some(custodian) else None
+            }
+            // case 3 search for both surname/name pairs
+            case 3 => {
+                val surname_2 = nameParts(2)
+                if((text.contains(surname) && text.contains(name)) ||
+                    (text.contains(surname_2) && text.contains(name))) Some(custodian) else None
+            }
         }
+        // NOTE: CHANGELOG of the custodians file:
+        // multiple dashed surnames (i.e., Gilberth-Smith, Mims-Thurston) "-" have been replaced by a " ", note that Smith has omonimi
+        // 122,124 initials have been removed
+        // 144 (i.e. Bill Williams III), III has been removed
+        // 146 (i.e. Y'Barbo), "Y'" has been removed
+        // 3 "Harpreet Arora" -> "Harry Arora"
     }
 
     type EmailParsingException = RuntimeException
-
 }

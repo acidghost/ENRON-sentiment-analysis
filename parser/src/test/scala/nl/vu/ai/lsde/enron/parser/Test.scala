@@ -30,17 +30,15 @@ object Test {
 
         // scalastyle:on line.size.limit
 
-        println(tests2(0))
-        println("---------------\n\n\n")
+//        println(tests2(0))
+//        println("---------------\n---------------\n---------------\n")
 
         var custodians = Commons.getCustodians
 
-        var parsed = tests2.map { testMail =>
+        var parsed = tests.map { testMail =>
             EmailParser.parse(testMail, custodians)
         }
 //        parsed foreach println
-//        println("\nparsed(0).to:")
-//        parsed(0).to foreach println
 //        println(parsed(0).to)
 //        println(parsed(0).bcc)
 //        println(parsed(0).cc)
