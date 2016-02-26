@@ -15,4 +15,15 @@
 1. `eval $(./hathi-client/bin/env.sh)`
 2. `kinit USRNAME`
 
+#### Dependencies
+Because CoreNLP models are huge (~200MB), they are marked as `provided` in the build.
+To download the JAR type `wget https://repo1.maven.org/maven2/edu/stanford/nlp/stanford-corenlp/3.4.1/stanford-corenlp-3.4.1-models.jar`
+and then upload it to the cluster with `hdfs dfs -put ./stanford-corenlp-3.4.1-models.jar hdfs:///user/lsde03/enron/jars/`.
+Then don't forget to add it to the job's classpath with the option `spark-submit --jars hdfs:///user/lsde03/enron/jars/stanford-corenlp-3.4.1-models.jar ...`.
+Because the cluster only supports Java 7 we are forced to use CoreNLP version 3.4.1 because later versions only support Java8.
 
+#### Launching jobs
+Package fat JARs using `./bin/assembly.sh`.
+All those scripts assume that you are in the "cluster environment" and logged in via kerberos.
+- Unzipper: using `./bin/deploy_unzipper.sh`.
+- ETL: using `./bin/deploy_etl.sh`.
