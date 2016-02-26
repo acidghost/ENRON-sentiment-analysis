@@ -50,6 +50,9 @@ object Build extends Build {
 
     lazy val etlSettings = rootSettings ++ Seq(
         libraryDependencies ++= Seq(sparkCore, hadoopClient, sparkSql, protobuf, coreNLP, coreNLPModels),
+        assemblyOption in assembly := (assemblyOption in assembly).value.copy(includeDependency = false),
+        assembly <<= assembly dependsOn assemblyPackageDependency,
+        assemblyJarName in assemblyPackageDependency := "etl-deps.jar",
         assemblyJarName in assembly := "etl.jar"
     )
 
