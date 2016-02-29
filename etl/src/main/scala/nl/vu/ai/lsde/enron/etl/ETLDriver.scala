@@ -5,7 +5,7 @@ import java.util.Properties
 import edu.stanford.nlp.pipeline.{Annotation, StanfordCoreNLP}
 import edu.stanford.nlp.sentiment.SentimentCoreAnnotations
 import nl.vu.ai.lsde.enron.etl.EmailParser.EmailParsingException
-import nl.vu.ai.lsde.enron.{Commons, EmailWithSentiment, MailBox, MailBoxWithSentiment}
+import nl.vu.ai.lsde.enron._
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{SQLContext, SaveMode}
 import org.apache.spark.{SparkConf, SparkContext}
@@ -19,10 +19,11 @@ object ETLDriver {
     def main (args: Array[String]) {
         val allExtracted = sc.objectFile[(String, Seq[String])](Commons.ENRON_EXTRACTED_TXT)
 
-        // get custodians from csv file
-        // FIXME this doesn't work on the cluster (- object not serializable (class: scala.io.BufferedSource
-        val custodians = sc.broadcast(Commons.getCustodians)
-   
+        // get custodians from csv file stored in HDFS
+        val csv = sc.textFile(Commons.ENRON_CUSTODIANS_CSV_HDFS).map{line => line.split(",")}
+        var custodians = sc.broadcast(csv.map{record => Custodian(record(0),record(1),Option(record(2)))}.collect().toSeq)
+
+        // parse emails
         val allParsed: RDD[MailBox] = allExtracted.map { case (mailbox, emails) =>
             val parsedEmails = emails flatMap { email =>
                 try Some(EmailParser.parse(email, custodians.value))
@@ -33,7 +34,6 @@ object ETLDriver {
 
             MailBox(mailbox, parsedEmails)
         }
-
 
         // load sentiment annotator pipeline
         val nlpProps = new Properties
@@ -47,6 +47,7 @@ object ETLDriver {
                 val sentiment = document.get[String](classOf[SentimentCoreAnnotations.ClassName])
                 EmailWithSentiment(email.date, email.from, email.to ++ email.cc ++ email.bcc, email.subject, sentiment)
             }
+            
             MailBoxWithSentiment(mailbox.name, emailsWithSentiment)
         }
 

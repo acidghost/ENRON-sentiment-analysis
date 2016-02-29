@@ -17,6 +17,7 @@ object Commons {
     val ENRON_SENTIMENT_DATAFRAME = s"$LSDE_ENRON/sentiment_df.parquet"
 
     val ENRON_CUSTODIANS_CSV_RES = "/custodians_def.csv"
+    val ENRON_CUSTODIANS_CSV_HDFS = s"$LSDE_ENRON/custodians_def.csv"
 
     val ENRON_SPAM_DATA = s"$LSDE_ENRON/spam_dataset"
     val ENRON_SPAM_TF = s"$LSDE_ENRON/spam_tf"
@@ -45,7 +46,8 @@ object Commons {
     }
 
     /**
-      * Gets the ENRON corpus v2 custodians from the local CSV resource
+      * Gets the ENRON corpus v2 custodians from the local CSV resource.
+      * The cluster seems to fail this loading, so use the CSV stored in the HDFS instead.
       * @return The custodians
       */
     def getCustodians: Seq[Custodian] = {
