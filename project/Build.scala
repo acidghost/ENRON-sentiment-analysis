@@ -64,6 +64,13 @@ object Build extends Build {
         assemblyJarName in assembly := "spam-filter.jar"
     )
 
+    lazy val sentimentResumerSettings = rootSettings ++ Seq(
+        libraryDependencies ++= Seq(sparkCore, hadoopClient, sparkSql, protobuf, coreNLP, coreNLPModels),
+        assemblyOption in assembly := (assemblyOption in assembly).value.copy(includeDependency = false),
+        assembly <<= assembly dependsOn assemblyPackageDependency,
+        assemblyJarName in assemblyPackageDependency := "sentiment-resumer.jar",
+        assemblyJarName in assembly := "sentiment-resumer.jar"
+    )
 
     lazy val root = Project(id = "root", base = file("."), settings = rootSettings).aggregate(unzipper, etl, spamFilter)
 
@@ -74,5 +81,8 @@ object Build extends Build {
     lazy val etl = Project(id = "etl", base = file("./etl"), settings = etlSettings).dependsOn(commons)
 
     lazy val spamFilter = Project(id = "spam-filter", base = file("./spam-filter"), settings = spamFilterSettings).dependsOn(commons)
+
+    lazy val sentimentResumer = Project(id = "sentiment-resumer", base = file("./sentiment-resumer"),
+        settings = sentimentResumerSettings).dependsOn(commons)
 
 }
