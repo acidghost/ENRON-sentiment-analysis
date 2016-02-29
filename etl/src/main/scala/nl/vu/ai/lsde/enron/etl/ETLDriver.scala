@@ -47,7 +47,7 @@ object ETLDriver {
                 val sentiment = document.get[String](classOf[SentimentCoreAnnotations.ClassName])
                 EmailWithSentiment(email.date, email.from, email.to ++ email.cc ++ email.bcc, email.subject, sentiment)
             }
-            
+
             MailBoxWithSentiment(mailbox.name, emailsWithSentiment)
         }
 

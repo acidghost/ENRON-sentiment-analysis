@@ -112,12 +112,11 @@ object EmailParser {
         val surname = nameParts(1)
 
         nameParts.length match {
-            // il solo cognome non è identificativo, nemmeno nel formato cognome@enron
-            // cognome AND nome
-            // cognome AND nome_initial... esiste veramente? lo ignoriamo?
+            // surnames are not unique, therefore surname@enron cannot be used
+            // thus, look for both surname AND name
             case 2 =>
                 if(text.contains(surname) && text.contains(name)) Some(custodian) else None
-            // case 3 search for both surname/name pairs
+            // multiple surnames custodian: search for both (surname,name) pairs
             case 3 =>
                 val surname_2 = nameParts(2)
                 if((text.contains(surname) && text.contains(name)) ||
