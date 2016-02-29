@@ -6,7 +6,7 @@ import nl.vu.ai.lsde.enron.Commons
 // sbt etl/test:run
 object ParserTest {
 
-    def main (args: Array[String]) {
+    def main (args: Array[String]): Unit = {
         // scalastyle:off line.size.limit
         val tests = Seq(
             "Date: Wed, 7 Feb 2001 14:11:00 -0800 (PST)\nFrom: Harry Arora\nTo: Enron\nSubject: Allan Sommer\nX-SDOC: 528063\nX-ZLID: zl-edrm-enron-v2-arora-h-914.eml\n\nHello, email!\n\n***********\nEDRM Enron Email Data Set has been produced in EML, PST and NSF format by ZL Technologies, Inc. This Data Set is licensed under a Creative Commons Attribution 3.0 United States License <http://creativecommons.org/licenses/by/3.0/us/> . To provide attribution, please cite to \"ZL Technologies, Inc. (http://www.zlti.com).\"\n***********",

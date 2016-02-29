@@ -16,7 +16,7 @@ object ETLDriver {
     val conf = new SparkConf().setAppName(appName)
     val sc = new SparkContext(conf)
 
-    def main (args: Array[String]) {
+    def main (args: Array[String]): Unit = {
         val allExtracted = sc.objectFile[(String, Seq[String])](Commons.ENRON_EXTRACTED_TXT)
 
         // get custodians from csv file stored in HDFS
