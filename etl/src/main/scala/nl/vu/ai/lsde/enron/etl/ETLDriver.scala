@@ -37,7 +37,7 @@ object ETLDriver {
 
         // load sentiment annotator pipeline
         val nlpProps = new Properties
-        nlpProps.setProperty("annotators", "sentiment")
+        nlpProps.setProperty("annotators", "tokenize, ssplit, pos, parse, lemma, sentiment")
         val pipeline = new StanfordCoreNLP(nlpProps)
         // classify sentiment and save w/o body
         val mailboxesSentiment = allParsed.map { mailbox =>
