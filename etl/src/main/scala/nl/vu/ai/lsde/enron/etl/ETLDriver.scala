@@ -35,12 +35,15 @@ object ETLDriver {
             MailBox(mailbox, parsedEmails)
         }
 
-        // load sentiment annotator pipeline
-        val nlpProps = new Properties
-        nlpProps.setProperty("annotators", "tokenize, ssplit, pos, parse, lemma, sentiment")
-        val pipeline = new StanfordCoreNLP(nlpProps)
+
         // classify sentiment and save w/o body
         val mailboxesSentiment = allParsed.map { mailbox =>
+            // load sentiment annotator pipeline
+            val nlpProps = new Properties
+            nlpProps.setProperty("annotators", "tokenize, ssplit, pos, parse, lemma, sentiment")
+            val pipeline = new StanfordCoreNLP(nlpProps)
+
+            // annotation
             val emailsWithSentiment = mailbox.emails.map { email =>
                 val document = new Annotation(email.body)
                 pipeline.annotate(document)
