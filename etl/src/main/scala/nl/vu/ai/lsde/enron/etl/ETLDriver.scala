@@ -18,6 +18,8 @@ object ETLDriver {
 
     def main (args: Array[String]): Unit = {
         val allExtracted = sc.objectFile[(String, Seq[String])](Commons.ENRON_EXTRACTED_TXT)
+        // Testing on a sub-sample
+//        val allExtracted = sc.objectFile[(String, Seq[String])](Commons.ENRON_EXTRACTED_TXT).sample(false, 0.01, 42)
 
         // get custodians from csv file stored in HDFS
         val csv = sc.textFile(Commons.ENRON_CUSTODIANS_CSV_HDFS).map{line => line.split(",")}
@@ -34,7 +36,6 @@ object ETLDriver {
 
             MailBox(mailbox, parsedEmails)
         }
-
 
         // classify sentiment and save w/o body
         val mailboxesSentiment = allParsed.map { mailbox =>

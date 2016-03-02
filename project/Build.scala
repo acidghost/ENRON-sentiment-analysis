@@ -65,10 +65,7 @@ object Build extends Build {
     )
 
     lazy val sentimentResumerSettings = rootSettings ++ Seq(
-        libraryDependencies ++= Seq(sparkCore, hadoopClient, sparkSql, protobuf, coreNLP, coreNLPModels),
-        assemblyOption in assembly := (assemblyOption in assembly).value.copy(includeDependency = false),
-        assembly <<= assembly dependsOn assemblyPackageDependency,
-        assemblyJarName in assemblyPackageDependency := "sentiment-resumer.jar",
+        libraryDependencies ++= Seq(sparkCore, hadoopClient, sparkSql),
         assemblyJarName in assembly := "sentiment-resumer.jar"
     )
 

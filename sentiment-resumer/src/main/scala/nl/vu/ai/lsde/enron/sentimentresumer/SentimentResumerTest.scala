@@ -1,4 +1,4 @@
-package nl.vu.ai.lsde.enron.unzipper
+package nl.vu.ai.lsde.enron.sentimentresumer
 
 import nl.vu.ai.lsde.enron.Commons
 import org.apache.spark.sql.SQLContext
@@ -21,6 +21,8 @@ object SentimentResumerTest {
 
         // load sentiment dataframe
         val dfSentiment = sqlContext.read.parquet(Commons.ENRON_SENTIMENT_DATAFRAME)
+
+        dfSentiment.registerTempTable("df")
 
         //TODO for each day compute overall sentiment
 
