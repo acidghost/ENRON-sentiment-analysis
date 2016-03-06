@@ -34,6 +34,7 @@ object UnzipperDriver extends App {
     }
 
     // save the collection of mailboxes on disk
+    Commons.deleteFolder(Commons.ENRON_EXTRACTED_TXT)
     dataset.saveAsObjectFile(Commons.ENRON_EXTRACTED_TXT)
 
 
@@ -44,7 +45,7 @@ object UnzipperDriver extends App {
       * @param filter The filename filter
       * @return A collection of extracted documents
       */
-    def unzip(stream: PortableDataStream, filter: String = "text_000/"): Seq[String] = {
+    def unzip(stream: PortableDataStream, filter: String = "text_0"): Seq[String] = {
 
         val buffer = new Array[Byte](1024)
         // regexp that matches non attachment files
