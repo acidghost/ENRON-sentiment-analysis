@@ -15,19 +15,28 @@ object ETLDriver {
 
     val appName = "ENRON-etl"
     val conf = new SparkConf().setAppName(appName)
+    conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
+    conf.set("spark.kryoserializer.buffer.max", "512m")
+    conf.set("spark.driver.maxResultSize", "0")
+    conf.registerKryoClasses(Array(classOf[Properties], classOf[StanfordCoreNLP]))
     val sc = new SparkContext(conf)
 
     def main(args: Array[String]): Unit = {
-        val allExtracted = sc.objectFile[(String, Seq[String])](Commons.ENRON_EXTRACTED_TXT)
+
+        import org.apache.log4j.{Level, Logger}
+        val level = Level.WARN
+        Logger.getLogger("org").setLevel(level)
+//        Logger.getLogger("akka").setLevel(level)
+
         // Testing on a sub-sample
-        //        val allExtracted = sc.objectFile[(String, Seq[String])](Commons.ENRON_EXTRACTED_TXT).sample(false, 0.01, 42)
+        val allExtracted = sc.objectFile[(String, Seq[String])](Commons.ENRON_EXTRACTED_TXT).take(1)
 
         // get custodians from csv file stored in HDFS
         val csv = sc.textFile(Commons.ENRON_CUSTODIANS_CSV_HDFS).map { line => line.split(",") }
         var custodians = sc.broadcast(csv.map { record => Custodian(record(0), record(1), Option(record(2))) }.collect().toSeq)
 
         // parse emails
-        val allParsed: RDD[MailBox] = allExtracted.map { case (mailbox, emails) =>
+        val allParsed: Array[MailBox] = allExtracted.map { case (mailbox, emails) =>
             val parsedEmails = emails flatMap { email =>
                 try Some(EmailParser.parse(email, custodians.value))
                 catch {
@@ -41,20 +50,34 @@ object ETLDriver {
         val sqlContext = new SQLContext(sc)
         import sqlContext.implicits._
 
-        val dfFull = allParsed.toDF()
+        val dfFull = sc.parallelize(allParsed).toDF()
+
+        println("\n\n\n*******************")
+        println("dfFull")
+        println("*******************")
+        dfFull.printSchema()
+        println("*******************")
+        dfFull.show()
+
         dfFull.write.mode(SaveMode.Overwrite).parquet(Commons.ENRON_FULL_DATAFRAME)
-        dfFull.unpersist()
-        allExtracted.unpersist()
+
+        // clean mem
+        dfFull.unpersist(true)
+        custodians.destroy()
+
+
+        // load sentiment annotator pipeline
+        val nlpProps = new Properties
+        nlpProps.setProperty("annotators", "tokenize, ssplit, pos, parse, lemma, sentiment")
+        val pipeline = new StanfordCoreNLP(nlpProps)
+
+        sc.broadcast(nlpProps)
+        sc.broadcast(pipeline)
 
         // classify sentiment and save w/o body
         val mailboxesSentiment = allParsed.map { mailbox =>
             // annotation
             val emailsWithSentiment = mailbox.emails.map { email =>
-                // load sentiment annotator pipeline
-                val nlpProps = new Properties
-                nlpProps.setProperty("annotators", "tokenize, ssplit, pos, parse, lemma, sentiment")
-                val pipeline = new StanfordCoreNLP(nlpProps)
-
                 val document = new Annotation(email.body)
                 pipeline.annotate(document)
                 val sentiment = document.get[String](classOf[SentimentCoreAnnotations.ClassName])
@@ -64,8 +87,17 @@ object ETLDriver {
             MailBoxWithSentiment(mailbox.name, emailsWithSentiment)
         }
 
-        val dfSentiment = mailboxesSentiment.toDF()
+        val dfSentiment = sc.parallelize(mailboxesSentiment).toDF()
+
+        println("\n\n\n*******************")
+        println("dfSentiment")
+        println("*******************")
+        dfSentiment.printSchema()
+        println("*******************")
+        dfSentiment.show()
+
         dfSentiment.write.mode(SaveMode.Overwrite).parquet(Commons.ENRON_SENTIMENT_DATAFRAME)
+
     }
 
 }
