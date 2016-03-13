@@ -89,6 +89,6 @@ case class MailBox(name: String, emails: Seq[Email])
 
 
 case class EmailWithSentiment(date: Timestamp, from: Seq[Custodian], to: Seq[Custodian],
-                              subject: String, sentiment: String)
+                              subject: String, sentiment: Double)
 
 case class MailBoxWithSentiment(name: String, emails: Seq[EmailWithSentiment])

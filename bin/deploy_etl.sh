@@ -8,11 +8,11 @@ set -x
 spark-submit \
 	--master yarn \
 	--deploy-mode cluster \
-	--num-executors 64 \
-	--executor-memory 24G \
+	--num-executors 16 \
+	--executor-memory 6G \
 	--executor-cores 8 \
 	--driver-cores 8 \
-	--driver-memory 16G \
+	--driver-memory 6G \
 	--class ${class} \
 	--jars ${jars} ${driver_jar}  
 set +x
