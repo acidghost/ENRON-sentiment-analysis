@@ -18,31 +18,11 @@ import scala.collection.JavaConversions._
 
 object ETLDriver {
 
-    import org.apache.log4j.{Level, Logger}
-    val level = Level.WARN
-    Logger.getLogger("org").setLevel(level)
-
     val appName = "ENRON-etl"
     val conf = new SparkConf().setAppName(appName)
-
-    conf.set("spark.memory.offHeap.enabled", "true")
-    conf.set("spark.memory.offHeap.size", "2g")
-
-    // enable Kryo serializer for Core NLP
-//    conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
-//    conf.set("spark.kryoserializer.buffer.max", "512m")
-//    conf.registerKryoClasses(Array(classOf[Properties], classOf[StanfordCoreNLP]))
-
-    // driver conf
-//    conf.set("spark.driver.cores", "2")
-//    conf.set("spark.driver.maxResultSize", "2g") // Limit of total size of serialized results of all partitions for each Spark action (e.g. collect)
-//    conf.set("spark.driver.memory", "2g")
-
-    // executors conf
-//    conf.set("spark.executor.memory", "2g") // heap size
-//    conf.set("spark.executor.cores", "2")
-
+    conf.set("spark.driver.maxResultSize", "4g")
     val sc = new SparkContext(conf)
+    val storageLvl = StorageLevel.MEMORY_AND_DISK
 
     // scalastyle:off method.length
     def main(args: Array[String]): Unit = {
@@ -50,7 +30,7 @@ object ETLDriver {
 
         // Testing on a sub-sample
         val allExtracted = sc.objectFile[(String, Seq[String])](Commons.ENRON_EXTRACTED_TXT).sample(withReplacement = false, .1, 42L)
-        allExtracted.persist(StorageLevel.OFF_HEAP)
+        allExtracted.persist(storageLvl)
 
         // get custodians from csv file stored in HDFS
         val csv = sc.textFile(Commons.ENRON_CUSTODIANS_CSV_HDFS).map { line => line.split(",") }
@@ -66,14 +46,13 @@ object ETLDriver {
             }
 
             MailBox(mailbox, parsedEmails)
-        }
-        allParsed.persist(StorageLevel.OFF_HEAP)
+        }.persist(storageLvl)
 
         val sqlContext = new SQLContext(sc)
         import sqlContext.implicits._
 
-        val dfFull = allParsed.toDF()
-        dfFull.persist(StorageLevel.OFF_HEAP)
+        val dfFull = allParsed.toDF().persist(storageLvl)
+
 
         println("\n\n\n*******************")
         println("dfFull")
@@ -87,14 +66,15 @@ object ETLDriver {
         dfFull.select('emails).flatMap(r => r.getSeq[Email](0)).sample(withReplacement = false, .1, 42L).foreach(println)
 
         dfFull.write.mode(SaveMode.Overwrite).parquet(Commons.ENRON_FULL_DATAFRAME)
-        dfFull.unpersist()
-        allExtracted.unpersist()
 
         // repartition allParsed (increase partitions)
         println(s"N partitions before resize: ${allParsed.partitions.length}")
-        val repartitioned = allParsed.repartition(allParsed.partitions.length * 10)
+        val repartitioned = allParsed.repartition(allParsed.partitions.length * 10).persist(storageLvl)
         println(s"N partitions after resize: ${repartitioned.partitions.length}")
-        repartitioned.persist(StorageLevel.OFF_HEAP)
+
+        allExtracted.unpersist()
+        allParsed.unpersist()
+        dfFull.unpersist()
 
         // classify sentiment and save w/o body
         val mailboxesSentiment = repartitioned.map { mailbox =>
@@ -124,11 +104,9 @@ object ETLDriver {
             }
 
             MailBoxWithSentiment(mailbox.name, emailsWithSentiment)
-        }
-        mailboxesSentiment.persist(StorageLevel.OFF_HEAP)
+        }.persist(storageLvl)
 
-        val dfSentiment = mailboxesSentiment.toDF()
-        dfSentiment.persist(StorageLevel.OFF_HEAP)
+        val dfSentiment = mailboxesSentiment.toDF().persist(storageLvl)
 
         println("\n\n\n*******************")
         println("dfSentiment")

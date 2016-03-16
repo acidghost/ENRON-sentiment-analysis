@@ -9,7 +9,11 @@ spark-submit \
 	--master yarn \
 	--deploy-mode cluster \
 	--verbose \
-	--num-executors 8 \
+	--num-executors 24 \
+	--executor-memory 12g \
+	--driver-memory 12g \
+	--executor-cores 1 \
+	--driver-cores 1 \
 	--class ${class} \
 	--jars ${jars} ${driver_jar}  
 set +x
