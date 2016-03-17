@@ -9,11 +9,12 @@ spark-submit \
 	--master yarn \
 	--deploy-mode cluster \
 	--verbose \
-	--num-executors 24 \
-	--executor-memory 12g \
-	--driver-memory 12g \
-	--executor-cores 1 \
-	--driver-cores 1 \
+	--num-executors 8 \
+	--executor-memory 8g \
+	--driver-memory 8g \
+	--executor-cores 4 \
+	--driver-cores 4 \
+	--driver-java-options "-verbose:gc -XX:+PrintGCDetails -XX:+PrintGCTimeStamps" \
 	--class ${class} \
 	--jars ${jars} ${driver_jar}  
 set +x
