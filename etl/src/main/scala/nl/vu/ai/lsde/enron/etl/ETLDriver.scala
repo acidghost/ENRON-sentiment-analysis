@@ -15,14 +15,17 @@ import org.apache.spark.{SparkConf, SparkContext}
 
 import scala.collection.JavaConversions._
 
-
 object ETLDriver {
 
     val appName = "ENRON-etl"
     val conf = new SparkConf().setAppName(appName)
-    conf.set("spark.driver.maxResultSize", "4g")
+
+    conf.set("spark.driver.maxResultSize", "2g")
+    conf.set("spark.yarn.executor.memoryOverhead", "12000") //deafult: driverMemory * 0.10, with minimum of 384
+    conf.set("spark.yarn.driver.memoryOverhead", "12000")
+    conf.set("spark.task.maxFailures", "2") // Number of allowed retries = this value - 1.
     val sc = new SparkContext(conf)
-    val storageLvl = StorageLevel.MEMORY_AND_DISK
+    val storageLvl = StorageLevel.MEMORY_AND_DISK_SER_2
 
     // scalastyle:off method.length
     def main(args: Array[String]): Unit = {
@@ -76,28 +79,33 @@ object ETLDriver {
         allParsed.unpersist()
         dfFull.unpersist()
 
+
+
         // classify sentiment and save w/o body
         val mailboxesSentiment = repartitioned.map { mailbox =>
+
             // load sentiment annotator pipeline
-            val nlpProps = new Properties
+            @transient lazy val nlpProps = new Properties
             nlpProps.setProperty("annotators", "tokenize, ssplit, pos, parse, lemma, sentiment")
-            val pipeline = new StanfordCoreNLP(nlpProps)
+            @transient lazy val pipeline = new StanfordCoreNLP(nlpProps)
 
             // annotation
             val emailsWithSentiment = mailbox.emails.map { email =>
-                val document = new Annotation(email.body)
-                pipeline.annotate(document)
-
-                val sentences = document.get(classOf[SentencesAnnotation])
-
-                val sentiments = sentences.toList.map { sentence =>
-                    val tree = sentence.get(classOf[SentimentCoreAnnotations.AnnotatedTree])
-                    val sentenceSentiment = RNNCoreAnnotations.getPredictedClass(tree)
-                    sentenceSentiment
-                }
-
-                // TODO because some emails have empty body, the array is empty, so 0 / 0 = NaN
-                val sentiment = sentiments.sum / sentiments.length.toDouble
+                // uncommenting the following makes it fail: http://head05.hathi.surfsara.nl/cluster/app/application_1456482988572_10049
+//                val document = new Annotation(email.body)
+//                pipeline.annotate(document)
+//
+//                val sentences = document.get(classOf[SentencesAnnotation])
+//
+//                val sentiments = sentences.toList.map { sentence =>
+//                    val tree = sentence.get(classOf[SentimentCoreAnnotations.AnnotatedTree])
+//                    val sentenceSentiment = RNNCoreAnnotations.getPredictedClass(tree)
+//                    sentenceSentiment
+//                }
+//
+//                // TODO because some emails have empty body, the array is empty, so 0 / 0 = NaN
+//                val sentiment = sentiments.sum / sentiments.length.toDouble
+                val sentiment = 0.42 // foo value
 
                 println(s"${mailbox.name} - $sentiment - ${email.subject}")
                 EmailWithSentiment(email.date, email.from, email.to ++ email.cc ++ email.bcc, email.subject, sentiment)
@@ -105,6 +113,7 @@ object ETLDriver {
 
             MailBoxWithSentiment(mailbox.name, emailsWithSentiment)
         }.persist(storageLvl)
+
 
         val dfSentiment = mailboxesSentiment.toDF().persist(storageLvl)
 

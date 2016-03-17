@@ -15,6 +15,7 @@ object Commons {
 
     val ENRON_FULL_DATAFRAME = s"$LSDE_ENRON/full_df.parquet"
     val ENRON_SENTIMENT_DATAFRAME = s"$LSDE_ENRON/sentiment_df.parquet"
+    val ENRON_SENTIMENT_RDD = s"$LSDE_ENRON/sentiment.rdd"
 
     val ENRON_CUSTODIANS_CSV_RES = "/custodians_def.csv"
     val ENRON_CUSTODIANS_CSV_HDFS = s"$LSDE_ENRON/custodians_def.csv"
