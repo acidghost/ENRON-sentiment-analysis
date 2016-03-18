@@ -84,29 +84,33 @@ object ETLDriver {
         // classify sentiment and save w/o body
         val mailboxesSentiment = repartitioned.map { mailbox =>
 
-            // load sentiment annotator pipeline
-            @transient lazy val nlpProps = new Properties
-            nlpProps.setProperty("annotators", "tokenize, ssplit, pos, parse, lemma, sentiment")
-            @transient lazy val pipeline = new StanfordCoreNLP(nlpProps)
 
             // annotation
             val emailsWithSentiment = mailbox.emails.map { email =>
-                // uncommenting the following makes it fail: http://head05.hathi.surfsara.nl/cluster/app/application_1456482988572_10049
-//                val document = new Annotation(email.body)
-//                pipeline.annotate(document)
-//
-//                val sentences = document.get(classOf[SentencesAnnotation])
-//
-//                val sentiments = sentences.toList.map { sentence =>
-//                    val tree = sentence.get(classOf[SentimentCoreAnnotations.AnnotatedTree])
-//                    val sentenceSentiment = RNNCoreAnnotations.getPredictedClass(tree)
-//                    sentenceSentiment
-//                }
-//
-//                // TODO because some emails have empty body, the array is empty, so 0 / 0 = NaN
-//                val sentiment = sentiments.sum / sentiments.length.toDouble
-                val sentiment = 0.42 // foo value
 
+                // load sentiment annotator pipeline
+                @transient lazy val nlpProps = new Properties
+                nlpProps.setProperty("annotators", "tokenize, ssplit, pos, parse, lemma, sentiment")
+                nlpProps.setProperty("tokenize.options", "untokenizable=allDelete")
+                nlpProps.setProperty("tokenize.options", "ptb3Escaping=true")
+                nlpProps.setProperty("pos.maxlen", "50")
+                nlpProps.setProperty("parse.maxlen", "50")
+                @transient lazy val pipeline = new StanfordCoreNLP(nlpProps)
+
+                val document = new Annotation(email.body.take(50))
+
+                pipeline.annotate(document)
+
+                val sentences = document.get(classOf[SentencesAnnotation])
+
+                val sentiments = sentences.toList.map { sentence =>
+                    val tree = sentence.get(classOf[SentimentCoreAnnotations.AnnotatedTree])
+                    val sentenceSentiment = RNNCoreAnnotations.getPredictedClass(tree)
+                    sentenceSentiment
+                }
+
+                // TODO because some emails have empty body, the array is empty, so 0 / 0 = NaN
+                val sentiment = sentiments.sum / sentiments.length.toDouble
                 println(s"${mailbox.name} - $sentiment - ${email.subject}")
                 EmailWithSentiment(email.date, email.from, email.to ++ email.cc ++ email.bcc, email.subject, sentiment)
             }
@@ -121,7 +125,7 @@ object ETLDriver {
         println("dfSentiment")
         println("*******************")
         dfSentiment.printSchema()
-//        dfSentiment.show()
+        dfSentiment.show()
         println("*******************")
 
         dfSentiment.write.mode(SaveMode.Overwrite).parquet(Commons.ENRON_SENTIMENT_DATAFRAME)
