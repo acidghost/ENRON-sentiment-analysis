@@ -9,7 +9,7 @@ spark-submit \
 	--master yarn \
 	--deploy-mode cluster \
 	--verbose \
-	--num-executors 8 \
+	--num-executors 12 \
 	--executor-memory 6g \
 	--driver-memory 6g \
 	--executor-cores 4 \

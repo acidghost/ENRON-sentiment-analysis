@@ -32,7 +32,7 @@ object ETLDriver {
 
 
         // Testing on a sub-sample
-        val allExtracted = sc.objectFile[(String, Seq[String])](Commons.ENRON_EXTRACTED_TXT).sample(withReplacement = false, .1, 42L)
+        val allExtracted = sc.objectFile[(String, Seq[String])](Commons.ENRON_EXTRACTED_TXT)
         allExtracted.persist(storageLvl)
 
         // get custodians from csv file stored in HDFS
@@ -66,7 +66,7 @@ object ETLDriver {
 
         // this will print on the executors
         // TODO fix parsing! some emails contain the footer and a LOT have empty body
-        dfFull.select('emails).flatMap(r => r.getSeq[Email](0)).sample(withReplacement = false, .1, 42L).foreach(println)
+//        dfFull.select('emails).flatMap(r => r.getSeq[Email](0)).sample(withReplacement = false, .1, 42L).foreach(println)
 
         dfFull.write.mode(SaveMode.Overwrite).parquet(Commons.ENRON_FULL_DATAFRAME)
 
