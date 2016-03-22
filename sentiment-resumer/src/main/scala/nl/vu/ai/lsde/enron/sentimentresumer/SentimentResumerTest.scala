@@ -23,9 +23,8 @@ object SentimentResumerTest {
         val sqlContext = new SQLContext(sc)
         import sqlContext.implicits._
 
-        // load sentiment dataframe
+        // LOADING SENTIMENT DATA
         val dfSentiment = sqlContext.read.parquet(Commons.ENRON_SENTIMENT_DATAFRAME)
-
 
         val allEmails = dfSentiment
             .explode("emails", "email") {emails: Seq[EmailWithSentiment] => emails}
@@ -42,29 +41,32 @@ object SentimentResumerTest {
         allEmailsNorm.show
         allEmailsNorm.printSchema
 
-
         val sentimentPerDay = allEmailsNorm
             .groupBy("date")
             .avg("sentiment")
-            .where($"date" >= Date.valueOf("1997-01-01") && $"date" <= Date.valueOf("2015-12-25")) //TODO: there are too many weird dates filtered out!
+            .where($"date" >= Date.valueOf("1997-01-01") && $"date" <= Date.valueOf("2003-12-31")) //TODO: there are too many weird dates filtered out!
             .sort("date")
 
-        sentimentPerDay.show(5000)
-        sentimentPerDay.printSchema()
+        sentimentPerDay.show
+        sentimentPerDay.printSchema
 
+        // LOADING ENTRON STOCK DATA
         val csv = sqlContext.read
             .format("com.databricks.spark.csv")
             .option("header","true")
             .option("inferSchema","true")
-            .load("/user/lsde03/enron/enron_stock_prices.csv")
+            .load(Commons.ENRON_STOCK_PRICES_CSV)
 
         val enronStock = csv
             .withColumn("date2", csv("date").cast("Date"))
             .drop("date")
             .withColumnRenamed("date2","date")
 
-        //TODO outer joinenronStock e sentiment su colonna "date"
+        // JOIN ALL AND WRITE
+        val output = sentimentPerDay.join(enronStock, $"date" === $"date", "outer")
 
-        sentimentPerDay.repartition(1).write.mode(SaveMode.Overwrite).json(Commons.ENRON_SENTIMENT_RESUME_JSON)
+        output.show(5000)
+        output.printSchema
+        output.repartition(1).write.mode(SaveMode.Overwrite).json(Commons.ENRON_SENTIMENT_RESUME_JSON)
     }
 }
