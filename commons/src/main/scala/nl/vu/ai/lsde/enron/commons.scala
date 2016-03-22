@@ -13,13 +13,17 @@ object Commons {
     val LSDE_ENRON = s"$LSDE_USER_SPACE/enron"
     val ENRON_EXTRACTED_TXT = s"$LSDE_ENRON/extracted_txt"
 
+    // DFs & RDDs
     val ENRON_FULL_DATAFRAME = s"$LSDE_ENRON/full_df.parquet"
     val ENRON_SENTIMENT_DATAFRAME = s"$LSDE_ENRON/sentiment_df.parquet"
     val ENRON_SENTIMENT_RDD = s"$LSDE_ENRON/sentiment.rdd"
+    val ENRON_SENTIMENT_RESUME_JSON = s"$LSDE_ENRON/sentiment_resume.json"
 
+    // CUSTODIANS LIST
     val ENRON_CUSTODIANS_CSV_RES = "/custodians_def.csv"
     val ENRON_CUSTODIANS_CSV_HDFS = s"$LSDE_ENRON/custodians_def.csv"
 
+    // SPAM FILTER
     val ENRON_SPAM_DATA = s"$LSDE_ENRON/spam_dataset"
     val ENRON_SPAM_TF = s"$LSDE_ENRON/spam_tf"
     val ENRON_SPAM_IDF = s"$LSDE_ENRON/spam_idf"
