@@ -30,14 +30,14 @@ object ETLDriver {
     // scalastyle:off method.length
     def main(args: Array[String]): Unit = {
 
-
-        // Testing on a sub-sample
         val allExtracted = sc.objectFile[(String, Seq[String])](Commons.ENRON_EXTRACTED_TXT)
         allExtracted.persist(storageLvl)
 
         // get custodians from csv file stored in HDFS
         val csv = sc.textFile(Commons.ENRON_CUSTODIANS_CSV_HDFS).map { line => line.split(",") }
-        val custodians = sc.broadcast(csv.map { record => Custodian(record(0), record(1), Option(record(2))) }.collect().toSeq)
+        val custodians = sc.broadcast(csv.map {
+            record => Custodian(record(0), record(1), Option(record(2)))
+        }.collect().toSeq)
 
         // parse emails
         val allParsed: RDD[MailBox] = allExtracted.map { case (mailbox, emails) =>
@@ -48,21 +48,14 @@ object ETLDriver {
                 }
             }
 
-            MailBox(mailbox, parsedEmails)
+            // try to filter empty/short body emails
+            MailBox(mailbox, parsedEmails.filter(email => email.body.length > 10 ))
         }.persist(storageLvl)
 
         val sqlContext = new SQLContext(sc)
         import sqlContext.implicits._
 
         val dfFull = allParsed.toDF().persist(storageLvl)
-
-
-        println("\n\n\n*******************")
-        println("dfFull")
-        println("*******************")
-        dfFull.printSchema()
-        dfFull.show()
-        println("*******************")
 
         // this will print on the executors
         // TODO fix parsing! some emails contain the footer and a LOT have empty body
@@ -80,10 +73,8 @@ object ETLDriver {
         dfFull.unpersist()
 
 
-
         // classify sentiment and save w/o body
         val mailboxesSentiment = repartitioned.map { mailbox =>
-
 
             // annotation
             val emailsWithSentiment = mailbox.emails.map { email =>
@@ -106,30 +97,25 @@ object ETLDriver {
                 val sentiments = sentences.toList.map { sentence =>
                     val tree = sentence.get(classOf[SentimentCoreAnnotations.AnnotatedTree])
                     val sentenceSentiment = RNNCoreAnnotations.getPredictedClass(tree)
-                    sentenceSentiment
+                    sentenceSentiment.toDouble
                 }
 
-                // TODO because some emails have empty body, the array is empty, so 0 / 0 = NaN
+                // TODO because some emails have empty body, the array is empty, so 0 / 0.0 = NaN
                 val sentiment = sentiments.sum / sentiments.length.toDouble
-                println(s"${mailbox.name} - $sentiment - ${email.subject}")
+                val sentimentRatio = Commons.pnRatio(sentiments)
+                val sentimentSum = sentiments.sum
+
+                println(s"extraction: ${mailbox.name} \t snt%:$sentiment \t sum:${sentiments.sum} \t len:${sentiments.length} \t ratio:$sentimentRatio \t subj:${email.subject}")
+
                 EmailWithSentiment(email.date, email.from, email.to ++ email.cc ++ email.bcc, email.subject, sentiment)
             }
 
             MailBoxWithSentiment(mailbox.name, emailsWithSentiment)
         }.persist(storageLvl)
 
-
         val dfSentiment = mailboxesSentiment.toDF().persist(storageLvl)
 
-        println("\n\n\n*******************")
-        println("dfSentiment")
-        println("*******************")
-        dfSentiment.printSchema()
-        dfSentiment.show()
-        println("*******************")
-
         dfSentiment.write.mode(SaveMode.Overwrite).parquet(Commons.ENRON_SENTIMENT_DATAFRAME)
-
     }
 
 }

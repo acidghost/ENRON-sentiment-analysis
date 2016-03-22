@@ -56,6 +56,7 @@ object Commons {
     /**
       * Gets the ENRON corpus v2 custodians from the local CSV resource.
       * The cluster seems to fail this loading, so use the CSV stored in the HDFS instead.
+      *
       * @return The custodians
       */
     def getCustodians: Seq[Custodian] = {
@@ -70,6 +71,25 @@ object Commons {
             }
             Custodian(items(0), items(1), role)
         }
+    }
+
+    // http://support.semantria.com/customer/portal/articles/1127703-calculating-the-average-sentiment-of-multiple-items
+    def pnRatio(sentiments: Iterable[Double]): Double = {
+        val postCount = sentiments.count( sentiment => if (sentiment > 0.0) true else false).toDouble
+        val negCount = sentiments.count( sentiment => if (sentiment < 0.0) true else false).toDouble
+
+        val ratio = postCount match {
+            case x if postCount < negCount => -1*(negCount/postCount)
+            case x if postCount > negCount => postCount/negCount
+            case _ => 0.0
+        }
+
+        ratio match {
+            case x if ratio < -0.0 => -1.0
+            case x if ratio > 0.0 => 1.0
+            case _ => 0.0
+        }
+        ratio
     }
 }
 

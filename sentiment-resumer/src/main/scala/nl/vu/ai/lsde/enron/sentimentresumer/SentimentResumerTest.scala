@@ -19,6 +19,7 @@ object SentimentResumerTest {
     val conf = new SparkConf().setAppName(appName)
     val sc = new SparkContext(conf)
 
+    // scalastyle:off method.length
     def main (args: Array[String]): Unit = {
         val sqlContext = new SQLContext(sc)
         import sqlContext.implicits._
@@ -30,8 +31,9 @@ object SentimentResumerTest {
             .explode("emails", "email") {emails: Seq[EmailWithSentiment] => emails}
             .drop("emails")
 
+        // TODO: some dates have weird formats e.g. 0002-11-30
         val allEmailsNorm = allEmails
-            .withColumn("date", functions.to_date(allEmails("email.date"))) //TODO: some dates have weird formats e.g. 0002-11-30
+            .withColumn("date", functions.to_date(allEmails("email.date")))
             .withColumn("from", allEmails("email.from"))
             .withColumn("to", allEmails("email.to"))
             .withColumn("subject", allEmails("email.subject"))
@@ -39,16 +41,16 @@ object SentimentResumerTest {
             .drop("email")
 
         allEmailsNorm.show
-        allEmailsNorm.printSchema
 
+        // TODO: many weird dates are being filtered!
         val sentimentPerDay = allEmailsNorm
+            .where($"date" >= Date.valueOf("1997-01-01") && $"date" <= Date.valueOf("2003-12-31"))
             .groupBy("date")
             .avg("sentiment")
-            .where($"date" >= Date.valueOf("1997-01-01") && $"date" <= Date.valueOf("2003-12-31")) //TODO: there are too many weird dates filtered out!
             .sort("date")
+            .withColumnRenamed("avg(sentiment)","sentiment")
 
         sentimentPerDay.show
-        sentimentPerDay.printSchema
 
         // LOADING ENTRON STOCK DATA
         val csv = sqlContext.read
@@ -58,15 +60,18 @@ object SentimentResumerTest {
             .load(Commons.ENRON_STOCK_PRICES_CSV)
 
         val enronStock = csv
-            .withColumn("date2", csv("date").cast("Date"))
+            .withColumn("date_2", csv("date").cast("Date"))
             .drop("date")
-            .withColumnRenamed("date2","date")
+            .drop("volume")
+            .withColumnRenamed("date_2", "date")
+
+        enronStock.show
 
         // JOIN ALL AND WRITE
-        val output = sentimentPerDay.join(enronStock, $"date" === $"date", "outer")
+//        val output = sentimentPerDay.join(enronStock, sentimentPerDay("date") === enronStock("date_new"), "outer")
+        val output = sentimentPerDay.join(enronStock, Seq("date"), "outer")
 
         output.show(5000)
-        output.printSchema
         output.repartition(1).write.mode(SaveMode.Overwrite).json(Commons.ENRON_SENTIMENT_RESUME_JSON)
     }
 }

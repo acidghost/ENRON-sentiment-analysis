@@ -8,9 +8,10 @@ spark-submit \
     --master yarn \
     --deploy-mode cluster \
     --packages com.databricks:spark-csv_2.11:1.2.0 \
+    --verbose \
     --num-executors 12 \
-	--executor-memory 12g \
-	--driver-memory 12g \
+	--executor-memory 8g \
+	--driver-memory 8g \
 	--executor-cores 4 \
 	--driver-cores 4 \
     --class ${class} ${driver_jar}

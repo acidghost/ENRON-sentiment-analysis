@@ -14,7 +14,7 @@ object EmailParser {
     val subjectReply = "^R[Ee]: [\\w\\W\\s]*$"
     val originalMsg = ">?\\s? -----Original Message-----"
 
-
+    // scalastyle:off method.length
     def parse(text: String, custodians: Seq[Custodian]): Email = {
         // get headers and body
         val (headers, body) = text.split("\n\n") match {
@@ -56,13 +56,13 @@ object EmailParser {
 
         // clean body from headers
         val bodyNoHeaders = bodyNoOrig.split('\n').map(_
-          .replaceAll(">?\\s?From:\\s[^\\n]*$", "")
-          .replaceAll(">?\\s?To:\\s[^\\n]*$", "")
-          .replaceAll(">?\\s?[Cc]c:\\s[^\\n]*$", "")
-          .replaceAll(">?\\s?[Bb]cc:\\s[^\\n]*$", "")
-          .replaceAll(">?\\s?Subject:\\s[^\\n]*$", "")
-          .replaceAll(">?\\s?Sent:\\s[^\\n]*$", "")
-          .replaceAll(">?\\s?Sent by:\\s[^\\n]*$", "")
+            .replaceAll(">?\\s?From:\\s[^\\n]*$", "")
+            .replaceAll(">?\\s?To:\\s[^\\n]*$", "")
+            .replaceAll(">?\\s?[Cc]c:\\s[^\\n]*$", "")
+            .replaceAll(">?\\s?[Bb]cc:\\s[^\\n]*$", "")
+            .replaceAll(">?\\s?Subject:\\s[^\\n]*$", "")
+            .replaceAll(">?\\s?Sent:\\s[^\\n]*$", "")
+            .replaceAll(">?\\s?Sent by:\\s[^\\n]*$", "")
         ).mkString("\n")
 
         Email(date.get, from.get, to.getOrElse(Seq()), cc.getOrElse(Seq()), bcc.getOrElse(Seq()), subject.get, bodyNoHeaders)
