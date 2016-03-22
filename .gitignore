@@ -7,4 +7,6 @@ target
 edrm*
 Parser.iml
 enron-spam
+paper/.texpadtmp/
+paper/*.pdf
 
