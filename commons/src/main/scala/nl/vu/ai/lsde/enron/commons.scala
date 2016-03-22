@@ -19,6 +19,9 @@ object Commons {
     val ENRON_SENTIMENT_RDD = s"$LSDE_ENRON/sentiment.rdd"
     val ENRON_SENTIMENT_RESUME_JSON = s"$LSDE_ENRON/sentiment_resume.json"
 
+    // PRICES
+    val ENRON_STOCK_PRICES_CSV = s"$LSDE_ENRON/enron_stock_prices.csv"
+
     // CUSTODIANS LIST
     val ENRON_CUSTODIANS_CSV_RES = "/custodians_def.csv"
     val ENRON_CUSTODIANS_CSV_HDFS = s"$LSDE_ENRON/custodians_def.csv"

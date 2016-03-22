@@ -7,6 +7,7 @@ set -x
 spark-submit \
     --master yarn \
     --deploy-mode cluster \
+    --packages com.databricks:spark-csv_2.11:1.2.0 \
     --num-executors 8 \
 	--executor-memory 12g \
 	--driver-memory 12g \

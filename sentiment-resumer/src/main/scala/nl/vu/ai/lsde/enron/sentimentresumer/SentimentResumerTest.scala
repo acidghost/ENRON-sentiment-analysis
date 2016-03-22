@@ -1,10 +1,11 @@
 package nl.vu.ai.lsde.enron.sentimentresumer
 
-import java.sql.{Date}
+import java.sql.{Timestamp, Date}
 
-import nl.vu.ai.lsde.enron.{EmailWithSentiment, Commons}
-import org.apache.spark.sql.{SaveMode, SQLContext, functions}
-import org.apache.spark.{SparkContext, SparkConf}
+import nl.vu.ai.lsde.enron.{Commons, EmailWithSentiment}
+import org.apache.spark.sql.types._
+import org.apache.spark.sql.{SQLContext, SaveMode, functions}
+import org.apache.spark.{SparkConf, SparkContext}
 
 
 
@@ -51,6 +52,21 @@ object SentimentResumerTest {
         sentimentPerDay.show(5000)
         sentimentPerDay.printSchema()
 
-        sentimentPerDay.write.mode(SaveMode.Overwrite).json(Commons.ENRON_SENTIMENT_RESUME_JSON)
+//        val customSchema = StructType(Array(
+//            StructField("Date", TimestampType, false),
+//            StructField("Close", DoubleType, false),
+//            StructField("High", DoubleType, false),
+//            StructField("Low", DoubleType, false),
+//            StructField("Volume", IntegerType, false)))
+
+        val csv = sqlContext.read
+            .format("com.databricks.spark.csv")
+            .option("header","true")
+            .option("inferSchema","true")
+            .load("/user/lsde03/enron/enron_stock_prices.csv")
+
+        val enronStock = csv.withColumn("Date", csv("Date").cast("Date"))
+
+        sentimentPerDay.repartition(1).write.mode(SaveMode.Overwrite).json(Commons.ENRON_SENTIMENT_RESUME_JSON)
     }
 }

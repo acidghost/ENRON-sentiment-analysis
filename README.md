@@ -27,3 +27,7 @@ Package fat JARs using `./bin/assembly.sh`.
 All those scripts assume that you are in the "cluster environment" and logged in via kerberos.
 - Unzipper: using `./bin/deploy_unzipper.sh`.
 - ETL: using `./bin/deploy_etl.sh`.
+
+
+#### Notes
+```enron_stock_prices.csv``` source: http://www.gilardi.com/pdf/enro13ptable.pdf
