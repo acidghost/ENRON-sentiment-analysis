@@ -51,7 +51,7 @@ object SentimentResumerTest {
 
         sentimentPerDay.show(5000)
         sentimentPerDay.printSchema()
-         
+
         val csv = sqlContext.read
             .format("com.databricks.spark.csv")
             .option("header","true")
@@ -61,6 +61,9 @@ object SentimentResumerTest {
         val enronStock = csv
             .withColumn("date2", csv("date").cast("Date"))
             .drop("date")
+            .withColumnRenamed("date2","date")
+
+        //TODO outer joinenronStock e sentiment su colonna "date"
 
         sentimentPerDay.repartition(1).write.mode(SaveMode.Overwrite).json(Commons.ENRON_SENTIMENT_RESUME_JSON)
     }
