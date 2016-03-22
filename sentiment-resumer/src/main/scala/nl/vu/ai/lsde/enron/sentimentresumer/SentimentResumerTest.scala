@@ -51,21 +51,16 @@ object SentimentResumerTest {
 
         sentimentPerDay.show(5000)
         sentimentPerDay.printSchema()
-
-//        val customSchema = StructType(Array(
-//            StructField("Date", TimestampType, false),
-//            StructField("Close", DoubleType, false),
-//            StructField("High", DoubleType, false),
-//            StructField("Low", DoubleType, false),
-//            StructField("Volume", IntegerType, false)))
-
+         
         val csv = sqlContext.read
             .format("com.databricks.spark.csv")
             .option("header","true")
             .option("inferSchema","true")
             .load("/user/lsde03/enron/enron_stock_prices.csv")
 
-        val enronStock = csv.withColumn("Date", csv("Date").cast("Date"))
+        val enronStock = csv
+            .withColumn("date2", csv("date").cast("Date"))
+            .drop("date")
 
         sentimentPerDay.repartition(1).write.mode(SaveMode.Overwrite).json(Commons.ENRON_SENTIMENT_RESUME_JSON)
     }
