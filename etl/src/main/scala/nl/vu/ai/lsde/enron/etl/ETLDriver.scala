@@ -30,7 +30,8 @@ object ETLDriver {
     // scalastyle:off method.length
     def main(args: Array[String]): Unit = {
 
-        val allExtracted = sc.objectFile[(String, Seq[String])](Commons.ENRON_EXTRACTED_TXT)
+        // val allExtracted = sc.objectFile[(String, Seq[String])](Commons.ENRON_EXTRACTED_TXT)
+        val allExtracted = sc.objectFile[(String, Seq[String])](Commons.ENRON_EXTRACTED_TXT).sample(withReplacement = false, .1, 42L)
         allExtracted.persist(storageLvl)
 
         // get custodians from csv file stored in HDFS
@@ -44,12 +45,16 @@ object ETLDriver {
             val parsedEmails = emails flatMap { email =>
                 try Some(EmailParser.parse(email, custodians.value))
                 catch {
-                    case e: EmailParsingException => None
+                    case e: EmailParsingException =>
+                        println(e)
+                        None
                 }
             }
 
             // try to filter empty/short body emails
-            MailBox(mailbox, parsedEmails.filter(email => email.body.length > 10 ))
+            val longEmails = parsedEmails.filter(_.body.length > 10)
+            println(s"Using ${longEmails.length} over ${parsedEmails.length}")
+            MailBox(mailbox, longEmails)
         }.persist(storageLvl)
 
         val sqlContext = new SQLContext(sc)
@@ -59,7 +64,7 @@ object ETLDriver {
 
         // this will print on the executors
         // TODO fix parsing! some emails contain the footer and a LOT have empty body
-//        dfFull.select('emails).flatMap(r => r.getSeq[Email](0)).sample(withReplacement = false, .1, 42L).foreach(println)
+        dfFull.select('emails).flatMap(r => r.getSeq[Email](0)).sample(withReplacement = false, .1, 42L).foreach(println)
 
         dfFull.write.mode(SaveMode.Overwrite).parquet(Commons.ENRON_FULL_DATAFRAME)
 
@@ -103,9 +108,9 @@ object ETLDriver {
                 // TODO because some emails have empty body, the array is empty, so 0 / 0.0 = NaN
                 val sentiment = sentiments.sum / sentiments.length.toDouble
                 val sentimentRatio = Commons.pnRatio(sentiments)
-                val sentimentSum = sentiments.sum
 
-                println(s"extraction: ${mailbox.name} \t snt%:$sentiment \t sum:${sentiments.sum} \t len:${sentiments.length} \t ratio:$sentimentRatio \t subj:${email.subject}")
+                println(s"extraction: ${mailbox.name} \t snt%:$sentiment \t sum:${sentiments.sum} " +
+                  s"\t len:${sentiments.length} \t ratio:$sentimentRatio \t subj:${email.subject}")
 
                 EmailWithSentiment(email.date, email.from, email.to ++ email.cc ++ email.bcc, email.subject, sentiment)
             }

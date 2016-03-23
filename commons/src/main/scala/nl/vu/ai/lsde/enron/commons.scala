@@ -89,7 +89,6 @@ object Commons {
             case x if ratio > 0.0 => 1.0
             case _ => 0.0
         }
-        ratio
     }
 }
 

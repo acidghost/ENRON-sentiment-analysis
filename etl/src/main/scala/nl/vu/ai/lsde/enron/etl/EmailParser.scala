@@ -7,7 +7,7 @@ import nl.vu.ai.lsde.enron.{Custodian, Email}
 object EmailParser {
 
     val datePattern = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z '('z')'")
-    val enronDatasetFooter = "\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\nEDRM Enron Email Data Set has been produced in EML"
+    val enronDatasetFooter = "\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\nEDRM Enron"
     val forwardedBy = ("\\s?---------------------- Forwarded by ", "(\\w*\\s)?---------------------------")
     val forwardedByReg = forwardedBy._1 + "(.*)\\n" + forwardedBy._2
     val subjectFwd = "^F[Ww]: [\\w\\W\\s]*$"
@@ -42,7 +42,7 @@ object EmailParser {
         if (subject.isEmpty) throw new EmailParsingException(s"Unable to parse SUBJECT header in email:\n$text")
 
         // filter fixed footer for the body
-        val bodyNoFooter = body.split(enronDatasetFooter) match { case s: Array[String] => s.head }
+        val bodyNoFooter = body.split(enronDatasetFooter).head
         // remove just the "forwarded by" tag
         val bodyNoFwd = bodyNoFooter.replaceAll(forwardedByReg, "")
         // remove all the "original messages" text
