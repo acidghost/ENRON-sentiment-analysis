@@ -1,9 +1,6 @@
 # ENRON sentiment analysis
 ###### Large Scale Data Engineering assignment - VU MSc AI
 
-[Project's notes in Google Drive](https://docs.google.com/document/d/1EWcemUePsjHuGxTtwwh674qPbz1Hb0OI6r4YqnVsMz0/edit)
-
-
 ### Setup
 1. `git clone https://github.com/acidghost/ENRON-sentiment-analysis.git`  
 2. `git submodule update --depth 1 --init --recursive`  
