@@ -2,10 +2,17 @@
 \usepackage{graphicx}
 \usepackage{balance}
 
+% COMANDO PER EVIDENZIARE PARTI DA LEGGERE ATTENTAMETE
+\usepackage{color,comment}
+\usepackage{soul}
+\definecolor{lightcyan}{RGB}{210, 210, 250}
+\newcommand{\hlc}[2][lightcyan]{{\sethlcolor{#1}\hl{#2}}}
+%\newcommand{\hlc}{}
+
 
 \begin{document}
 
-\title{TITLEEEE}
+\title{E1: ENRON Sentiment}
 
 
 \numberofauthors{2} 
@@ -26,12 +33,44 @@ Enrico Rotundo\\
 \maketitle
 
 \begin{abstract}
-TODO
+Email dataset analysis is a challenging task in terms of quantity and poor-structured data.
+Anyway, the availability of big computational infrastructures such as cluster computers helps to face the former issue.
+Indeed, such platforms provide high and scalable computing and unload the programmer from the burden of managing most of its parallelisation and distribution.
+Unfortunately, email datasets usually come as unstructured dataset in the form of text files or, whenever they contain any markup structure, the actual data might not be well formed.
+In that case, the data could be human-readable but hardly parsable by a machine.
+Therefore, the analysis should include additional mining steps and many integrity checks, in order to minimise any possible inconsistencies.  
+
+In the past years, several email datasets from diverse sources have been publicly released.
+In this paper, we analyse the famous ``Enron Corpus'' which contains 620k messages in about 150 mailboxes belonging to Enron employees involved in a court case.
+We extract and analyse sentiments within those messages using functional programming together with a well known engine for large-scale data processing. 
+Thus, the analysis is run in a high performance computing cluster.   
+We present our result as an interactive visualisation of the sentiment spread via emails together with the company's stock price of the same period.
+\hlc{TODO: aggiungere le conclusioni!!!!!!!!!!!}
+
 \end{abstract}
 
 
 \section{Introduction}
-TODO
+Email is, at least on the user side, a simple mean of communication.
+Its popularity is probably due to the simplicity of usage: users can send textual messages and attachments to other addresses, also from mobile devices~\cite{chen2002enterprise}.   
+Thus, in the digital era it became very a popular way of communication between privates and companies.
+Normally, corporate emails are characterised by a specific structure, for example \textit{user@company.com}, where the \textit{user} suffix is a mailbox identifier and \textit{company.com} is a distinguishable company web domain.
+A corporate mailbox server can handle and store thousands of inbound or outbound messages every day, collecting quite a huge amount of exchanged data.
+
+Email dataset analysis consists in analyse a dumped data in order to extract specific information (e.g., communication patterns, sentiment analysis, etc.).
+Such analysis is expensive in terms of computation: the data is often composed of a multitude of items that have to be processed individually.
+Therefore, such tasks are normally run in distributed environments which allow high degrees of parallelisation.
+Cluster computing provides a platform for executing complex parallel tasks in a programmer-friendly environment~\cite{buyya1999high, zaharia2010spark, shvachko2010hadoop}.
+This means the programmer does not explicitly code how to parallelise the computation.
+Moreover, such systems rely on distributed file systems which provide large storage capabilities and support for redundancy and distributed accesses~\cite{weil2006ceph}.
+
+Furthermore, email datasets usually come in a semi-structured fashion in the sense that the actual data might not be well formed. 
+For instance, recipients attributes and email's body can be difficult to parse.
+Thus, the analysis should include some validation steps which might slow down the whole development process.
+
+ 
+~\cite{shetty2004enron}
+
 
 \section{Related work}
 TODO
@@ -52,6 +91,7 @@ TODO
 \section{Acknowledgments}
 SURFsara maybe?...
 
+\clearpage
 \balance
 \bibliographystyle{abbrv}
 \bibliography{bibliography} 
