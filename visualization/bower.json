@@ -1,0 +1,23 @@
+{
+  "name": "Enron Sentiment Analysis",
+  "homepage": "https://github.com/acidghost/ENRON-sentiment-analysis",
+  "authors": [
+    "Andrea Jemmett <andreajemmett@gmail.com>",
+	"Enrico Rotundo <enrico.rotundo@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "coffee-script": "coffeescript#^1.10.0"
+  }
+}
