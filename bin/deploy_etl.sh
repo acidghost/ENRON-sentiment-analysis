@@ -9,9 +9,9 @@ spark-submit \
 	--master yarn \
 	--deploy-mode cluster \
 	--verbose \
-	--num-executors 24 \
+	--num-executors 128 \
 	--executor-memory 12g \
-	--driver-memory 6g \
+	--driver-memory 12g \
 	--executor-cores 4 \
 	--driver-cores 4 \
 	--driver-java-options "-verbose:gc -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=1024m" \

@@ -31,7 +31,7 @@ object ETLDriver {
     def main(args: Array[String]): Unit = {
 
         // val allExtracted = sc.objectFile[(String, Seq[String])](Commons.ENRON_EXTRACTED_TXT)
-        val allExtracted = sc.objectFile[(String, Seq[String])](Commons.ENRON_EXTRACTED_TXT).sample(withReplacement = false, .1, 42L)
+        val allExtracted = sc.objectFile[(String, Seq[String])](Commons.ENRON_EXTRACTED_TXT)//.sample(withReplacement = false, .1, 42L)
         allExtracted.persist(storageLvl)
 
         // get custodians from csv file stored in HDFS
