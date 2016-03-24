@@ -1,6 +1,8 @@
 \documentclass{vldb}
 \usepackage{graphicx}
 \usepackage{balance}
+\usepackage{url}
+\usepackage{amssymb}
 
 % COMANDO PER EVIDENZIARE PARTI DA LEGGERE ATTENTAMETE
 \usepackage{color,comment}
@@ -41,7 +43,7 @@ In that case, the data could be human-readable but hardly parsable by a machine.
 Therefore, the analysis should include additional mining steps and many integrity checks, in order to minimise any possible inconsistencies.  
 
 In the past years, several email datasets from diverse sources have been publicly released.
-In this paper, we analyse the famous ``Enron Corpus'' which contains 620k messages in about 150 mailboxes belonging to Enron employees involved in a court case.
+In this paper, we analyse the famous ``ENRON Corpus'' which contains 620k messages in about 150 mailboxes belonging to ENRON employees involved in a court case.
 We extract and analyse sentiments within those messages using functional programming together with a well known engine for large-scale data processing. 
 Thus, the analysis is run in a high performance computing cluster.   
 We present our result as an interactive visualisation of the sentiment spread via emails together with the company's stock price of the same period.
@@ -66,27 +68,46 @@ Moreover, such systems rely on distributed file systems which provide large stor
 
 Furthermore, email datasets usually come in a semi-structured fashion in the sense that the actual data might not be well formed. 
 For instance, recipients attributes and email's body can be difficult to parse.
-Thus, the analysis should include some validation steps which might slow down the whole development process.
+Thus, the analysis should include some validation steps which increases the complexity of the whole analysis process.
 
- 
-~\cite{shetty2004enron}
+In this paper, we present a sentiment analysis on the well-known ``ENRON Corpus'' which contains 619,446 messages over 158 users~\cite{shetty2004enron}.
+This dataset has been published by the Federal Energy Regulatory Commission\footnote{\url{http://www.ferc.gov/}} during its early 2000s investigation on ENRON Corp. for bankrupt and fraud.
+Although it contains the mailboxes of ENRON's employees which were involved in the court case, the messages include text from many more email addresses, for example personal or even external to the company.
+We perform a sentiment analysis on that dataset using the state-of-the-art large-scale data processing tools.
+Due to the size of the dataset, about 50GB, we need to parallelise the computation.
+Thus, we use a functional programming language which is natively supported by Apache Spark engine.
+The latter is deployed in a cluster system which runs the whole computation quickly and in a flexible distributed environment.
+
+Our outcome is a visualisation of the sentiment extracted from employees' emails together with the ENRON's stock price of the same period.
+\hlc{TODO: aggiungere le conclusioni!!!!!!!!!!!}
+
+The rest of the paper is organised as follow.
+Section~\ref{sec:r-w} introduces similar works and the kind of technology used in our work.
+Section~\ref{sec:r-q} points out some research questions we try to answer by our analysis.
+Section~\ref{sec:p-s} details our analysis setting with respect to the analysis pipeline and its technical architecture. 
+Finally, Section~\ref{sec:exp} describes the of experiment run in order to collect our results and Section~\ref{sec:concl} draws some conclusion on the whole work.
+
 
 
 \section{Related work}
+\label{sec:r-w}
 TODO
 
 \section{Research questions}
+\label{sec:r-q}
 TODO
 
 \section{Project setup}
+\label{sec:p-s}
 TODO
 
 \section{Experiments}
+\label{sec:exp}
 TODO
 
 \section{Conclusions}
+\label{sec:concl}
 TODO
-
 
 \section{Acknowledgments}
 SURFsara maybe?...
