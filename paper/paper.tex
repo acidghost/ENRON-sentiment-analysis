@@ -66,7 +66,7 @@ Cluster computing provides a platform for executing complex parallel tasks in a 
 This means the programmer does not explicitly code how to parallelise the computation.
 Moreover, such systems rely on distributed file systems which provide large storage capabilities and support for redundancy and distributed accesses~\cite{weil2006ceph}.
 
-Furthermore, email datasets usually come in a semi-structured fashion in the sense that the actual data might not be well formed. 
+Furthermore, email datasets usually come in a semi structured fashion in the sense that the actual data might not be well formed. 
 For instance, recipients attributes and email's body can be difficult to parse.
 Thus, the analysis should include some validation steps which increases the complexity of the whole analysis process.
 
@@ -108,7 +108,15 @@ Unfortunately, the F1-score achieved using a Support Vector Machine (SVM) seems 
 
 
 \subsection{Sentiment Extraction}
-TODO
+Sentiment extraction from text has been well studied in the past 10 years~\cite{aggarwal2012mining, das2007yahoo, bai2004sentiment, gamon2005pulse, bird2009natural}.
+In~\cite{manning2014stanford}, the authors present a powerful deep-learning based tool for text annotation which provides sentiment labelling on a sentence-grain.
+That tool is the state-of-the-art in text annotation and is distributed as a fast and easy-to-use Open Source library.
+A live demo is also available on the related website\footnote{\url{http://nlp.stanford.edu:8080/sentiment/rntnDemo.html}}.
+Most emails contain human written text, therefore it is likely to contain some kind of emotions.
+Its spread is influenced by many factors (e.g., social, behavioural, etc.).
+For example,~\cite{mohammad2011tracking} shows emotion patterns in email messages occur with different characteristics depending on the genders involved.
+Specifically, the authors consider the eight basic and prototypical emotions~\cite{plutchik1980emotion} and point out their balance is biased depending on the gender of the sender/receiver genders.
+
 
 \subsection{Large-scale Data Processing Tools}
 TODO
