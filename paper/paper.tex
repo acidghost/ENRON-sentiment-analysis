@@ -100,11 +100,11 @@ A thorough analysis of such structure highlights the presence of redundant and S
 Similarly,~\cite{zhou2007strategies} describes some cleaning strategies for the aforementioned corpus.
 In particular, the authors analyse the actual difficulties in cleaning a corporate email dataset which in the ENRON case are multiple and mainly related to the text-parsing phase.
 Indeed, the authors claim there are a certain amount of duplicate emails, addresses and attachments which might come in a slightly different format, making the parsing more challenging.
-
-
-
-
-
+For example, it is possible to identify duplicate messages by checking the MD5 digest of the email's body constrained by same day~\cite{corrada2004enron}.
+Moreover, email bodies ofter report forwarded text or signatures which are not useful for a sentiment extraction.
+The authors claim that within the ENRON dataset, only 250k messages are actually unique and they belong to a total of 149 employees.
+In~\cite{klimt2004enron}, the authors investigate the feasibility of email folder prediction considering recipients attributes (e.g., \textit{From}, \textit{To}) as well as \textit{Subject} and \textit{body}.
+Unfortunately, the F1-score achieved using a Support Vector Machine (SVM) seems very poor, ranging from $0.3$ to $0.7$. 
 
 
 \subsection{Sentiment Extraction}
