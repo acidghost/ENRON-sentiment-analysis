@@ -119,7 +119,18 @@ Specifically, the authors consider the eight basic and prototypical emotions~\ci
 
 
 \subsection{Large-scale Data Processing Tools}
-TODO
+In order to perform email dataset analysis it is often necessary to employ specific tools able to support large-scale data processing jobs.
+Currently, there are many distributed tools available such as file systems and computing engines which often are shipped altogether as a single product~\cite{shvachko2010hadoop, zaharia2012resilient, meng2015mllib, shoro2015big, dean2008mapreduce, dean2010mapreduce}
+The Hadoop Distributed File System (HDFS) provides reliable storage of very large datasets and it has been developed as Open Source version of the Google File System (GFS)~\cite{shvachko2010hadoop, ghemawat2003google}.
+Altough HDFS is implemented in Java to support portability, it presents some performances drawbacks under certain conditions~\cite{shafer2010hadoop}.
+
+MapReduce is a flexible data-processing tool that automatically parallelise map-reduce jobs over key/value pairs, it is usually deployed on a cluster of computers which can deliver sufficient performances speedup~\cite{dean2010mapreduce}.
+This tools provides a powerful platform for deploying a diverse set of tasks.
+For instance, most machine learning algorithms can be implemented as map-reduce tasks and therefore run over a MapReduce cluster~\cite{chu2007map}. 
+
+Finally Apache Spark represents the state-of-the-art bundle which implement improved versions of the aforementioned functionalities~\cite{shoro2015big}.
+Indeed, this tool has been designed in order to bundle multiple big-data functionalities and libraries (e.g., SQL, machine learning, graph analysis, etc.)~\cite{meng2015mllib}, as well as to boost the overall performance~\cite{gopalani2015comparing}.
+Among many others, Spark provides advanced relational data processing which is close to traditional SQL databases systems~\cite{armbrust2015spark}. 
 
 
 \section{Research questions}
