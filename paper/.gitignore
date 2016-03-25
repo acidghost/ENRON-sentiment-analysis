@@ -1,0 +1,8 @@
+*.tex.swp
+*.log
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+
