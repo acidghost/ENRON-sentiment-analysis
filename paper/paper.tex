@@ -51,7 +51,7 @@ In this paper, we analyse the famous ``ENRON Corpus'' which contains 620k messag
 We extract and analyse sentiments within those messages using functional programming together with a well known engine for large-scale data processing. 
 Thus, the analysis is run in a high performance computing cluster.   
 We present our result as an interactive visualisation of the sentiment spread via emails together with the company's stock price of the same period.
-\hlc{TODO: aggiungere le conclusioni!!!!!!!!!!!}
+Our results show there is a weak correlation between the company's stock price and the sentiments extracted from the email corpus.
 
 \end{abstract}
 
@@ -83,7 +83,7 @@ Thus, we use a functional programming language which is natively supported by Ap
 The latter is deployed in a cluster system which runs the whole computation quickly and in a flexible distributed environment.
 
 Our outcome is a visualisation of the sentiment extracted from employees' emails together with the ENRON's stock price of the same period.
-\hlc{TODO: aggiungere le conclusioni!!!!!!!!!!!}
+Our experiment shows there is just a weak correlation between ENRON's stock price drop and sentiments extracted from the company's email dataset. 
 
 The rest of the paper is organised as follow.
 Section~\ref{sec:r-w} introduces similar works and the kind of technology used in our work.
@@ -281,9 +281,9 @@ On the other hand, the number and kind of assumptions might not be negligible.
 For instance, we have chosen to take into account only those recipients which appears to have a personal mailbox in our dataset.
 Therefore, people from outside the company and other employes are simply ignored.
 Given that those people have most likely contributed to the sentiment coded in the emails, we argue this assumption is rather strict and further investigations should assess weather it is the case.  
-\hlc{Furthermore, we claim that our visualisation provides useful hints for highlighting a not so strong correlation between emails' sentiment and the ENRON's stock price.
-We argue this fact might be due to noise in our dataset,
-Moreover, further experiments should be run with different settings, for example we could try different sentiment extraction techniques and other overall sentiment scoring functions.}
+Furthermore, we claim that our visualisation provides useful hints for highlighting a not so strong correlation between emails' sentiment and the ENRON's stock price.
+We argue this fact might be due to noise in our dataset.
+Moreover, further experiments should be run with different settings, for example we could try different sentiment extraction techniques and other overall sentiment scoring functions.
 Lastly, we observe the research question about the influence of individual behaviours cannot find answer in this work.
 This is mainly due to the lack of time to run further experiments.
 
