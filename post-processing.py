@@ -23,7 +23,7 @@ df["stock"] = df.close
 print df.corr()
 print "**********"
 print df.sentiment.describe()
-df.to_json(data_path+"_postprocessed.json")
+df.to_json(data_path+"_post")
 
 fig = plt.figure(figsize=(6, 4))
 ax = df.stock.plot(legend=True)
