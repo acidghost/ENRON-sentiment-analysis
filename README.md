@@ -1,6 +1,9 @@
 # ENRON sentiment analysis
 ###### Large Scale Data Engineering assignment - VU MSc AI
 
+### Web view
+[http://acidghost.github.io/ENRON-sentiment-analysis/visualization/](http://acidghost.github.io/ENRON-sentiment-analysis/visualization/)
+
 ### Setup
 1. `git clone https://github.com/acidghost/ENRON-sentiment-analysis.git`  
 2. `git submodule update --depth 1 --init --recursive`  
