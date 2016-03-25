@@ -72,6 +72,8 @@ object SentimentResumerTest {
         val output = sentimentPerDay.join(enronStock, Seq("date"), "outer")
 
         output.show(5000)
-        output.repartition(1).write.mode(SaveMode.Overwrite).json(Commons.ENRON_SENTIMENT_RESUME_JSON)
+
+        Commons.deleteFolder(Commons.ENRON_SENTIMENT_RESUME_JSON)
+        sc.parallelize(Seq(output.toJSON.collect().mkString("[", ",", "]"))).repartition(1).saveAsTextFile(Commons.ENRON_SENTIMENT_RESUME_JSON)
     }
 }
