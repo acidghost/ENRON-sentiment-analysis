@@ -91,8 +91,11 @@ Finally, Section~\ref{sec:exp} describes the of experiment run in order to colle
 
 \section{Related work}
 \label{sec:r-w}
+In this section we present an overview of some works related to this paper:
+\textit{email dataset analysis}, \textit{sentiment extraction} from text and lastly \textit{large-scale data processing tools}.
 
 \subsection{Email Dataset Analysis}
+\label{sub-sec:email-dataset-analysis}
 About email dataset analysis, literature reports many works focused on exploring, filtering and describing email datasets.
 Datasets can be noisy and some preparatory work like filtering and reorganising might be helpful to have a better grip on the data.
 For instance,~\cite{klimt2004introducing} provides metrics of the ``ENRON corpus'' as well as a description of it structure.
@@ -135,7 +138,19 @@ Among many others, Spark provides advanced relational data processing which is c
 
 \section{Research questions}
 \label{sec:r-q}
-TODO
+In this paper we show a sentiment analysis of an emails dataset.
+Considering the ``ENRON corpus'' a lot of work has already been done (see Section~\ref{sub-sec:email-dataset-analysis}).
+However, in order to give our contribution, we formalise the following research questions:
+\begin{enumerate}
+	\item Is it possible to extract useful and consistent sentiment information from a noisy dataset such as ``ENRON Corups''?
+	\item Is the sentiment extracted from ENRON's emails correlated with the company's stock price of the same period?
+	\item How individual behaviours affects the overall sentiment observable within a shoet (i.e., 1 day) timespan?
+\end{enumerate}
+
+In the rest of the paper we provide a description of our setting and we attempt to answer the research questions listed above.
+
+
+
 
 \section{Project setup}
 \label{sec:p-s}
