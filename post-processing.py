@@ -5,6 +5,8 @@ import numpy as np
 # import matplotlib
 # matplotlib.style.use('ggplot')
 
+matplotlib.rc('pdf', fonttype=42)
+matplotlib.rcParams.update({'font.size': 12})
 
 data_path = "visualization/data/part-00000"
 
@@ -30,4 +32,6 @@ ax.right_ax.set_ylabel('sentiment')
 ax.right_ax.set_ylim(1,3)
 
 
-plt.show()
+# plt.show()
+fig.tight_layout(pad=0.4)
+plt.savefig("paper/imgs/sentiment_vs_stock.pdf")
