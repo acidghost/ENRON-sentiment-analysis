@@ -2,11 +2,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import statsmodels.api as sm
 import numpy as np
-# import matplotlib
-# matplotlib.style.use('ggplot')
+import matplotlib
 
 matplotlib.rc('pdf', fonttype=42)
-matplotlib.rcParams.update({'font.size': 12})
+matplotlib.rcParams.update({'font.size': 9})
 
 data_path = "visualization/data/part-00000"
 
@@ -24,14 +23,17 @@ print df
 print df.corr()
 df.to_json(data_path+"_postprocessed.json")
 
-ax = df.close.plot()
+fig = plt.figure(figsize=(6, 4),)
+ax = df.close.plot(legend=True)
 ax.set_ylabel('stock price [$]')
 
-df.sentiment.plot(secondary_y=True, style='g')
+df.sentiment.plot(secondary_y=True, style='g', legend=True, mark_right=False)
 ax.right_ax.set_ylabel('sentiment')
 ax.right_ax.set_ylim(1,3)
 
 
 # plt.show()
-fig.tight_layout(pad=0.4)
+# plt.legend(loc='lower left', fontsize="small", borderpad=0.5)
+# plt.legend()
+plt.tight_layout()
 plt.savefig("paper/imgs/sentiment_vs_stock.pdf")
