@@ -1,16 +1,37 @@
+<!DOCTYPE html>
 <html>
 	<head>
 		<title>LSDE Group 03 - Enron Sentiment Analysis</title>
+		
+		<meta charset="utf-8">
+
 		<script type="text/javascript" src="bower_components/coffee-script/extras/coffee-script.js"></script>
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.js"></script>
-		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.16/d3.min.js" charset="utf-8"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.16/d3.js"></script>
 		<script type="text/coffeescript" src="main.coffee"></script>
 
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap-theme.min.css"/>
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css" />
+
+		<style>
+			svg { font: 12px Arial; }
+
+			path { 
+				stroke: black;
+				stroke-width: 2;
+				fill: none;
+			}
+
+			.axis path, .axis line {
+				fill: none;
+				stroke: grey;
+				stroke-width: 1;
+				shape-rendering: crispEdges;
+			}
+		</style>
 	</head>
 	<body>
-		<h1>Hello, World!</h1>
+		<h1>ENRON Sentiment Analysis</h1>
 	</body>
 </html>
 
