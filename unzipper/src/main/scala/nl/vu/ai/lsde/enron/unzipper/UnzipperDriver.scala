@@ -1,5 +1,6 @@
 package nl.vu.ai.lsde.enron.unzipper
 
+import java.io.{InputStreamReader, BufferedReader}
 import java.util.zip.{ZipEntry, ZipInputStream}
 
 import nl.vu.ai.lsde.enron.Commons
@@ -33,6 +34,8 @@ object UnzipperDriver extends App {
         (mailboxName, documents)
     }
 
+    dataset.flatMap(t => t._2).sample(withReplacement = false, .00001, 42L).collect().foreach(e => println(s"$e\n\n\n\n------- END EMAIL ----------\n\n\n"))
+
     // save the collection of mailboxes on disk
     Commons.deleteFolder(Commons.ENRON_EXTRACTED_TXT)
     dataset.saveAsObjectFile(Commons.ENRON_EXTRACTED_TXT)
@@ -47,11 +50,10 @@ object UnzipperDriver extends App {
       */
     def unzip(stream: PortableDataStream, filter: String = "text_0"): Seq[String] = {
 
-        val buffer = new Array[Byte](1024)
         // regexp that matches non attachment files
         val regexNotAttachments = "[\\W\\w]*/\\d+\\.\\d+\\.\\w+\\.txt"
 
-        val zis: ZipInputStream = new ZipInputStream(stream.open)
+        val zis: ZipInputStream = new ZipInputStream(stream.open())
         var ze: ZipEntry = zis.getNextEntry
 
         val documents = scala.collection.mutable.ArrayBuffer.empty[String]
@@ -61,15 +63,10 @@ object UnzipperDriver extends App {
 
             // consider only plain text files and don't consider attachments
             if (fileName.contains(filter) && fileName.matches(regexNotAttachments)) {
+                val reader = new BufferedReader(new InputStreamReader(zis, "UTF-8"))
+                val document = Stream.continually(reader.readLine()).takeWhile(_ != null).toSeq.mkString("\n")
 
-                val fileTxt = new StringBuilder
-                var len: Int = zis.read(buffer)
-                while (len > 0) {
-                    fileTxt ++= buffer.map(_.toChar).mkString
-                    len = zis.read(buffer)
-                }
-
-                documents += fileTxt.toString
+                documents += document
             }
 
             ze = zis.getNextEntry
