@@ -37,7 +37,7 @@ jQuery(document).ready ($) ->
 
 
 	# get data and show chart
-	$.get 'data/part-00000', {}, (data) ->
+	$.get 'data/part-00000_post', {}, (data) ->
 		data = JSON.parse data
 		console.log 'Before', data.length
 		data = data.filter (d) -> d.date? and d.close? and d.sentiment? and d.sentiment isnt 'NaN'
