@@ -44,11 +44,7 @@ object ETLDriver {
         val allParsed: RDD[MailBox] = allExtracted.map { case (mailbox, emails) =>
             val parsedEmails = emails flatMap { email =>
                 try Some(EmailParser.parse(email, custodians.value))
-                catch {
-                    case e: EmailParsingException =>
-                        println(e)
-                        None
-                }
+                catch { case _: EmailParsingException => None }
             }
 
             // try to filter empty/short body emails
@@ -64,13 +60,15 @@ object ETLDriver {
 
         // this will print on the executors
         // TODO fix parsing! some emails contain the footer and a LOT have empty body
-        dfFull.select('emails).flatMap(r => r.getSeq[Email](0)).sample(withReplacement = false, .1, 42L).foreach(println)
+        dfFull.explode("emails", "email") { emails: Seq[Email] => emails }.drop("emails").sample(withReplacement = false, .01, 42L).foreach { row =>
+            println(s"${row.getAs[Email](1)}\n\n\n")
+        }
 
         dfFull.write.mode(SaveMode.Overwrite).parquet(Commons.ENRON_FULL_DATAFRAME)
 
         // repartition allParsed (increase partitions)
         println(s"N partitions before resize: ${allParsed.partitions.length}")
-        val repartitioned = allParsed.repartition(allParsed.partitions.length * 10).persist(storageLvl)
+        val repartitioned = allParsed.repartition(allParsed.partitions.length * 20).persist(storageLvl)
         println(s"N partitions after resize: ${repartitioned.partitions.length}")
 
         allExtracted.unpersist()
@@ -89,11 +87,11 @@ object ETLDriver {
                 nlpProps.setProperty("annotators", "tokenize, ssplit, pos, parse, lemma, sentiment")
                 nlpProps.setProperty("tokenize.options", "untokenizable=allDelete")
                 nlpProps.setProperty("tokenize.options", "ptb3Escaping=true")
-                nlpProps.setProperty("pos.maxlen", "50")
-                nlpProps.setProperty("parse.maxlen", "50")
+                nlpProps.setProperty("pos.maxlen", "350")
+                nlpProps.setProperty("parse.maxlen", "350")
                 @transient lazy val pipeline = new StanfordCoreNLP(nlpProps)
 
-                val document = new Annotation(email.body.take(50))
+                val document = new Annotation(email.body.take(350))
 
                 pipeline.annotate(document)
 

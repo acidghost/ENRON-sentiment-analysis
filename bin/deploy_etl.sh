@@ -14,7 +14,7 @@ spark-submit \
 	--driver-memory 12g \
 	--executor-cores 4 \
 	--driver-cores 4 \
-	--driver-java-options "-verbose:gc -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=1024m" \
+	--driver-java-options "-verbose:gc -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=2048m" \
 	--class ${class} \
 	--jars ${jars} ${driver_jar}  
 set +x
