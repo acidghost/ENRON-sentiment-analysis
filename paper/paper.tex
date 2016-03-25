@@ -143,7 +143,7 @@ Considering the ``ENRON corpus'' a lot of work has already been done (see Sectio
 However, in order to give our contribution, we formalise the following research questions:
 \begin{enumerate}
 	\item Is it possible to extract useful and consistent sentiment information from a noisy dataset such as ``ENRON Corups''?
-	\item Is the sentiment extracted from ENRON's emails correlated with the company's stock price of the same period?
+	\item Does the sentiment extracted from ENRON's emails correlate with the company's stock price of the same period?
 	\item How individual behaviours affects the overall sentiment observable within a shoet (i.e., 1 day) timespan?
 \end{enumerate}
 
@@ -157,15 +157,35 @@ TODO
 \section{Experiments}
 \label{sec:exp}
 In this section we briefly explain the experiments run in order to obtain our results.
- 
+\hlc{TODO THIS!!!!!!!!!!!}
 
 \section{Conclusions}
 \label{sec:concl}
-TODO
+In this section we present some conclusions based on our results, considering the research questions listed in Section~\ref{sec:r-q}.
+Although, our results include a visualisation of sentiment information contained within the ``ENRON Corpus''.
+Therefore, we claim the sentiment extraction from an emails dataset is actually doable. 
+However, we highlight that in order to simplify our task we made some assumptions.
+On one hand, we claim this is absolutely common, and sometimes even necessary, in a large-scale data processing.
+On the other hand, the number and kind of assumptions might not be negligible.
+For instance, we have chosen to take into account only those recipients which appears to have a personal mailbox in our dataset.
+Therefore, people from outside the company and other employes are simply ignored.
+Given that those people have most likely contributed to the sentiment coded in the emails, we argue this assumption is rather strict and further investigations should assess weather it is the case.  
+\hlc{Furthermore, we claim that our visualisation provides useful hints for highlighting a not so strong correlation between emails' sentiment and the ENRON's stock price.
+We argue this fact might be due to noise in our dataset,
+Moreover, further experiments should be run with different settings, for example we could try different sentiment extraction techniques and other overall sentiment scoring functions.}
+Lastly, we observe the research question about the influence of individual behaviours cannot find answer in this work.
+This is mainly due to the lack of time to run further experiments.
+
+As further conclusion, we would highlight some remarks on the usability of employed technologies.
+In this paper we use Apache Spark which provides a distributed computing engine for running parallel applications.
+Although this system is deployed in high performance cluster which provides large memory availability, the user is still in charge of estimating its memory needs and consequently to fine tune the memory allocation, also considering machines' physical limits.
+Another highlight on Spark is the complexity of debugging some applications and the difficulty to read error logs.
+Since user's applications are run over different machines, logs output are spread all over the cluster and users might suffer of not having direct and quick access to it.
+ 
 
 \section{Acknowledgments}
 We would like to remark our thankfulness to our teachers Peter Boncz and Hannes M{\"u}hleisen for their inspiration and support during this work and the LSDE 15-16 course held at Vrije Universiteit Amsterdam.
-Last but not least we want to thank SURFsara\footnote{\url{www.surf.nl}} for the.
+Last but not least we want to thank SURFsara\footnote{\url{www.surf.nl}} for providing the cluster computing platform necessary to run our experiments.
 
 %\clearpage
 %\balance
