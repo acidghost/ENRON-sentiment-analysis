@@ -11,6 +11,10 @@
 \newcommand{\hlc}[2][lightcyan]{{\sethlcolor{#1}\hl{#2}}}
 %\newcommand{\hlc}{}
 
+\usepackage{hyperref}
+\hypersetup{pdftex,colorlinks=true,allcolors=blue}
+\usepackage{hypcap}
+
 
 \begin{document}
 
@@ -152,7 +156,91 @@ In the rest of the paper we provide a description of our setting and we attempt 
 
 \section{Project setup}
 \label{sec:p-s}
-TODO
+In this section we explain our software setup and the developed architecture.
+We created and deployed three Spark jobs, each one with a specific task, in
+order to render them more easily maintainable, manageable and deployable.
+
+\subsection{Archive Extraction}
+\label{sub-sec:archive-extraction}
+The first step in our data analysis pipeline comprises the extraction of the
+dataset from its \textit{zipped} form. The dataset consists of a collection of
+archives, each one enclosing an Enron's employee mailbox, containing emails in
+both native (eml, pdf, docx) and plain text (in which attachments have been
+converted into plain text too). We decided to extract and work with the plain
+text messages, filtering out attachments. The \texttt{UnzipperDriver} job is
+responsible for this. The goal of the job is to unzip the archives and store a
+collection of Scala tuples of the kind \texttt{(mailboxName, documents)} where
+the first element is the mailbox name (extracted from the zip filename) and
+documents is a \texttt{Seq} of extracted documents.
+
+\subsection{ETL}
+\label{sub-sec:etl}
+Second step is the \textit{ETL} (Extract, Transform, Load). Here the term
+\textit{Extraction} has a different meaning than that of the previous job.
+The extraction part in \texttt{ETLDriver} is about extracting data from emails
+in a structured form, that is we need to extract emails body and headers from
+the raw data. Do do this we created an \texttt{EmailParser} object that
+implements the extraction and parsing logic. In this we apply a series of
+transformations to the raw emails:
+\begin{itemize}
+	\item extract email headers (\textit{Date}, \textit{From}, \textit{To},
+		\textit{Cc}, \textit{Bcc} and \textit{Subject});
+	\item separate body from headers;
+	\item clean body from common dataset footer \footnote{Every email contains a
+		disclaimer from EDRM, the company that cleansed and published this
+		version of the Enron Corpus};
+	\item clean body from quoted emails, ``\textit{Original Message}'' and
+		``\textit{Forwarded By}'' text and delimiters.
+\end{itemize}
+
+Because we are interested only in emails exchanged by Enron employees, we need a
+way to retrieve and identify those people from the email headers. Unfortunately
+this is not straightforward because addresses and people names have different
+formats like ``\textit{first-name last-name}'', ``\textit{last-name, first-name}'',
+``\textit{first-name last-name, email}'' or ``\textit{last-name, initial}''.
+To solve this problem we use an external list of \textit{mailbox custodians}
+that gives us first, last name and its role within Enron. We then search
+\textit{From}, \textit{To}, \textit{Cc} and \textit{Bcc} headers for known
+custodians. If for an email it fails to find any known custodian, the message is
+discarded.
+
+Next processing step consists in transforming the extracted dataset into a form
+more easily manageable and queryable. We use CoreNLP to tokenize and find
+sentiment at sentence level in emails. Because the sentiment is at sentence
+level we need a way to aggregate those into a single sentiment for the whole
+email. To aggregate sentiments we use the following formula:
+\begin{equation}
+	S = \frac{\sum_{s \in SS} s}{|SS|}
+	\label{eq:sentiment-aggregation}
+\end{equation}
+where $SS$ is the set of sentence sentiments.
+
+Last step consists in storing the dataset for future analysis. We split the
+dataset in two: one contains the full email body and no sentiment, the other
+does not contain the body but has sentiments. We do this in order to have a more
+lightweight, sentiment-tagged corpus that we can analyse with more agility. We
+convert both datasets into Spark SQL's \texttt{DataFrame} that enables us to
+perform queries and data aggregation using the SQL language.
+
+\subsection{Sentiment Analyser}
+\label{sub-sec:sentiment-analyser}
+Last job that we use in our pipeline is the \texttt{SentimentResumer}. It is
+responsible for querying the sentiment-tagged dataset and joins it with Enron
+stock prices based on date. To do this we group emails by date and then we
+average the sentiments for that day and then join them with the stock prices
+data on the date field. Lastly we store the results as JSON so that we can
+then download them and use them for visualization purposes.
+
+\subsection{Visualization}
+\label{sub-sec:visualization}
+The resulting JSON file is used to visualize the correlation of Enron stock
+prices with email sentiment. We created a simple line chart with two lines and
+two vertical axes. A line represents the stock prices and another represents
+email sentiments. We built the interface in HTML and Coffeescript, using the d3
+visualization library. Because the codebase is hosted on Github we have chosen
+to deploy the visualization using Github Pages
+\footnote{\url{http://acidghost.github.io/ENRON-sentiment-analysis/visualization/}}
+which offers free hosting of static files.
 
 \section{Experiments}
 \label{sec:exp}
