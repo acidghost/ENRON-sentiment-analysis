@@ -242,10 +242,28 @@ to deploy the visualization using Github Pages
 \footnote{\url{http://acidghost.github.io/ENRON-sentiment-analysis/visualization/}}
 which offers free hosting of static files.
 
-\section{Experiments}
+\section{Experiment}
 \label{sec:exp}
-In this section we briefly explain the experiments run in order to obtain our results.
-\hlc{TODO THIS!!!!!!!!!!!}
+In this section we briefly explain the experiment run in order to obtain our results.
+After running the setup described in Section~\ref{sec:p-s}, we collect the output data.
+Then, we perform a post processing step in which we firstly resample the time series on a weekly (i.e., 7 days) basis using the average as aggregation function.
+Moreover, we apply an interpolation function (i.e., polynomial, $4^{th}$ order) to smooth out our time series.
+The result is shown in Figure~\ref{fig:sentiment_vs_stock}.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.48\textwidth]{imgs/sentiment_vs_stock}
+\caption{Time series of ENRON's stock price (blue) and sentiment values extracted from emails (green), from 2000-01-01 to 2001-12-31.}
+\label{fig:sentiment_vs_stock}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.48\textwidth]{imgs/sentiment_dist_hist}
+\caption{Distribution of sentiment values extracted from emails, from 2000-01-01 to 2001-12-31.}
+\label{fig:sentiment_dist_hist}
+\end{figure}
+
 
 \section{Conclusions}
 \label{sec:concl}
