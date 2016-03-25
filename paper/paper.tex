@@ -248,7 +248,9 @@ In this section we briefly explain the experiment run in order to obtain our res
 After running the setup described in Section~\ref{sec:p-s}, we collect the output data.
 Then, we perform a post processing step in which we firstly resample the time series on a weekly (i.e., 7 days) basis using the average as aggregation function.
 Moreover, we apply an interpolation function (i.e., polynomial, $4^{th}$ order) to smooth out our time series.
-The result is shown in Figure~\ref{fig:sentiment_vs_stock}.
+The result is shown in Figure~\ref{fig:sentiment_vs_stock} where we can notice the dramatic drop of the stock values by the end of 2001.
+Although the sentiment value seems not to be strongly affected by the stock's drop, we point out it has a decreasing overall trend.
+Indeed, the Pearson correlation  coefficient between the stock price and the sentiment time series is some $0.28$.
 
 \begin{figure}[h!]
 \centering
@@ -256,6 +258,9 @@ The result is shown in Figure~\ref{fig:sentiment_vs_stock}.
 \caption{Time series of ENRON's stock price (blue) and sentiment values extracted from emails (green), from 2000-01-01 to 2001-12-31.}
 \label{fig:sentiment_vs_stock}
 \end{figure}
+
+Surprisingly, the distribution of sentiment values, shown in Figure~\ref{fig:sentiment_dist_hist}, does not show a significant standard deviation ($0.12$) over the considered time period.
+This might be due to either low sentiment-annotation quality by the employed library, or most likely to some inconsistencies in the emails parsing task.
 
 \begin{figure}[h!]
 \centering

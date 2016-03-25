@@ -19,8 +19,10 @@ df.close = df.close.interpolate(method='polynomial', order=4)
 df.sentiment = df.sentiment.interpolate(method='polynomial', order=4)
 df["stock"] = df.close
 
-print df
+
 print df.corr()
+print "**********"
+print df.sentiment.describe()
 df.to_json(data_path+"_postprocessed.json")
 
 fig = plt.figure(figsize=(6, 4))
