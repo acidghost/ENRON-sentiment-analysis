@@ -14,7 +14,6 @@ object EmailParser {
     val subjectReply = "^R[Ee]: [\\w\\W\\s]*$"
     val originalMsg = ">?\\s? -----Original Message-----"
 
-    // scalastyle:off method.length
     def parse(text: String, custodians: Seq[Custodian]): Email = {
         // get headers and body
         val (headers, body) = text.split("\n\n") match {
@@ -41,29 +40,31 @@ object EmailParser {
         val subject = filterHeader(headers, "Subject: ")
         if (subject.isEmpty) throw new EmailParsingException(s"Unable to parse SUBJECT header in email:\n$text")
 
-        // filter fixed footer for the body
-        val bodyNoFooter = body.split(enronDatasetFooter).head
-        // remove just the "forwarded by" tag
-        val bodyNoFwd = bodyNoFooter.replaceAll(forwardedByReg, "")
-        // remove all the "original messages" text
-        val bodyNoOrig = if (subject.get.matches(subjectFwd)) { // check if email's subject reports something like Re: tag
-            bodyNoFwd.replaceAll(originalMsg, "")
-        } else {
-            // get the part above the originalMsg tag
-            try { bodyNoFwd.split(originalMsg).head }
-            catch { case e: NoSuchElementException => throw new EmailParsingException(s"Unable to process body of email:\n$text") }
-        }
+         // filter fixed footer for the body
+         val bodyNoFooter = body.split(enronDatasetFooter).head
 
-        // clean body from headers
-        val bodyNoHeaders = bodyNoOrig.split('\n').map(_
-            .replaceAll(">?\\s?From:\\s[^\\n]*$", "")
-            .replaceAll(">?\\s?To:\\s[^\\n]*$", "")
-            .replaceAll(">?\\s?[Cc]c:\\s[^\\n]*$", "")
-            .replaceAll(">?\\s?[Bb]cc:\\s[^\\n]*$", "")
-            .replaceAll(">?\\s?Subject:\\s[^\\n]*$", "")
-            .replaceAll(">?\\s?Sent:\\s[^\\n]*$", "")
-            .replaceAll(">?\\s?Sent by:\\s[^\\n]*$", "")
-        ).mkString("\n")
+         // remove just the "forwarded by" tag
+         val bodyNoFwd = bodyNoFooter.replaceAll(forwardedByReg, "")
+
+         // remove all the "original messages" text
+         val bodyNoOrig = if (subject.get.matches(subjectFwd)) { // check if email's subject reports something like Re: tag
+             bodyNoFwd.replaceAll(originalMsg, "")
+         } else {
+             // get the part above the originalMsg tag
+             try { bodyNoFwd.split(originalMsg).head }
+             catch { case e: NoSuchElementException => throw new EmailParsingException(s"Unable to process body of email:\n$text") }
+         }
+
+         // clean body from headers
+         val bodyNoHeaders = bodyNoOrig.split('\n').map(_
+             .replaceAll(">?\\s?From:\\s[^\\n]*$", "")
+             .replaceAll(">?\\s?To:\\s[^\\n]*$", "")
+             .replaceAll(">?\\s?[Cc]c:\\s[^\\n]*$", "")
+             .replaceAll(">?\\s?[Bb]cc:\\s[^\\n]*$", "")
+             .replaceAll(">?\\s?Subject:\\s[^\\n]*$", "")
+             .replaceAll(">?\\s?Sent:\\s[^\\n]*$", "")
+             .replaceAll(">?\\s?Sent by:\\s[^\\n]*$", "")
+         ).mkString("\n")
 
         Email(date.get, from.get, to.getOrElse(Seq()), cc.getOrElse(Seq()), bcc.getOrElse(Seq()), subject.get, bodyNoHeaders)
     }
@@ -95,7 +96,7 @@ object EmailParser {
         filterHeader(headers, filter) match {
             case Some(s) =>
                 // clean the attribute
-                val attribute = s.toLowerCase().trim.replaceAll("[^a-zA-Z@]","")
+                val attribute = s.toLowerCase.trim.replaceAll("[^a-zA-Z@]","")
 
                 // gets the custodians actually present within the header attribute
                 val custodiansPresent = custodians.flatMap(checkCustodianInString(_, attribute))
@@ -107,7 +108,7 @@ object EmailParser {
 
     private def checkCustodianInString(custodian: Custodian, text: String) : Option[Custodian] = {
         // get clean names parts
-        val nameParts = custodian.completeName.toLowerCase().split(" ")
+        val nameParts = custodian.completeName.toLowerCase.split(" ")
         val name = nameParts(0)
         val surname = nameParts(1)
 

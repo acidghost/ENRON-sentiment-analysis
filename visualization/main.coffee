@@ -57,7 +57,7 @@ jQuery(document).ready ($) ->
 		# set axes range
 		x.domain(d3.extent(data, (d) -> d.date))
 		y1.domain([0, d3.max(data, (d) -> d.close)])
-		y2.domain([1, d3.max(data, (d) -> d.sentiment)])
+		y2.domain([0, d3.max(data, (d) -> d.sentiment)])
 
 		# add stocks line
 		svg.append('path').attr('d', line_stocks(data))
