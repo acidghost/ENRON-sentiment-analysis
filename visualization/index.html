@@ -14,6 +14,11 @@
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css" />
 
 		<style>
+			#mailbox-selector {
+				margin-top: 20px;
+				max-width: 200px;
+			}
+
 			svg { font: 12px Arial; }
 
 			path { 
@@ -31,7 +36,21 @@
 		</style>
 	</head>
 	<body>
-		<h1>ENRON Sentiment Analysis</h1>
+		<div class="container">
+			<div class="row">
+				<div class="col-xs-12 col-sm-12 col-md-8">
+					<h1>ENRON Sentiment Analysis</h1>
+				</div>
+				<div class="col-xs-12 col-sm-12 col-md-4">
+					<select id="mailbox-selector" class="form-control input-sm"></select>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-12">
+					<div id="chart"></div>
+				</div>
+			</div>
+		</div>
 	</body>
 </html>
 

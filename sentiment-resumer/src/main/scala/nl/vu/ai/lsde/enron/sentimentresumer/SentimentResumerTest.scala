@@ -1,10 +1,10 @@
 package nl.vu.ai.lsde.enron.sentimentresumer
 
-import java.sql.{Timestamp, Date}
+import java.sql.Date
 
 import nl.vu.ai.lsde.enron.{Commons, EmailWithSentiment}
-import org.apache.spark.sql.types._
-import org.apache.spark.sql.{SQLContext, SaveMode, functions}
+import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.{DataFrame, SQLContext, functions}
 import org.apache.spark.{SparkConf, SparkContext}
 
 
@@ -19,10 +19,10 @@ object SentimentResumerTest {
     val conf = new SparkConf().setAppName(appName)
     val sc = new SparkContext(conf)
 
-    // scalastyle:off method.length
-    def main (args: Array[String]): Unit = {
-        val sqlContext = new SQLContext(sc)
-        import sqlContext.implicits._
+    val sqlContext = new SQLContext(sc)
+    import sqlContext.implicits._
+
+    def main(args: Array[String]): Unit = {
 
         // LOADING SENTIMENT DATA
         val dfSentiment = sqlContext.read.parquet(Commons.ENRON_SENTIMENT_DATAFRAME)
@@ -33,6 +33,7 @@ object SentimentResumerTest {
 
         // TODO: some dates have weird formats e.g. 0002-11-30
         val allEmailsNorm = allEmails
+            .withColumn("mailbox", allEmails("name"))
             .withColumn("date", functions.to_date(allEmails("email.date")))
             .withColumn("from", allEmails("email.from"))
             .withColumn("to", allEmails("email.to"))
@@ -40,7 +41,7 @@ object SentimentResumerTest {
             .withColumn("sentiment", allEmails("email.sentiment"))
             .drop("email")
 
-        allEmailsNorm.show
+        allEmailsNorm.show()
 
         // TODO: many weird dates are being filtered!
         val sentimentPerDay = allEmailsNorm
@@ -50,7 +51,7 @@ object SentimentResumerTest {
             .sort("date")
             .withColumnRenamed("avg(sentiment)","sentiment")
 
-        sentimentPerDay.show
+        sentimentPerDay.show()
 
         // LOADING ENTRON STOCK DATA
         val csv = sqlContext.read
@@ -65,7 +66,7 @@ object SentimentResumerTest {
             .drop("volume")
             .withColumnRenamed("date_2", "date")
 
-        enronStock.show
+        enronStock.show()
 
         // JOIN ALL AND WRITE
 //        val output = sentimentPerDay.join(enronStock, sentimentPerDay("date") === enronStock("date_new"), "outer")
@@ -74,6 +75,36 @@ object SentimentResumerTest {
         output.show(5000)
 
         Commons.deleteFolder(Commons.ENRON_SENTIMENT_RESUME_JSON)
-        sc.parallelize(Seq(output.toJSON.collect().mkString("[", ",", "]"))).repartition(1).saveAsTextFile(Commons.ENRON_SENTIMENT_RESUME_JSON)
+        asSingleJSON(output).saveAsTextFile(Commons.ENRON_SENTIMENT_RESUME_JSON)
+
+
+        // produce a JSON file for each mailbox
+        val mailBoxesNames = dfSentiment.select("name").map(r => r.getString(0)).collect()
+        val aggregatedMailboxes = mailBoxesNames.map(resumeMailbox(_, allEmailsNorm))
+
+        aggregatedMailboxes.map { resumed =>
+            (resumed._1, resumed._2.join(enronStock, Seq("date"), "outer"))
+        }.foreach { resumed =>
+          val filename = Commons.ENRON_SENTIMENT_RESUME_MB_JSON.format(resumed._1)
+          Commons.deleteFolder(filename)
+          asSingleJSON(resumed._2).saveAsTextFile(filename)
+        }
     }
+
+
+    def resumeMailbox(mailboxName: String, dfSentiment: DataFrame): (String, DataFrame) = {
+        val df = dfSentiment.where($"mailbox" === mailboxName)
+
+        val dfPerDay = df.where($"date" >= Date.valueOf("1997-01-01") && $"date" <= Date.valueOf("2003-12-31"))
+            .groupBy("date").avg("sentiment").sort("date").withColumnRenamed("avg(sentiment)","sentiment")
+
+
+        (mailboxName, dfPerDay)
+    }
+
+
+    private def asSingleJSON(df: DataFrame): RDD[String] =
+        sc.parallelize(Seq(df.toJSON.collect().mkString("[", ",", "]"))).repartition(1)
+
+
 }
