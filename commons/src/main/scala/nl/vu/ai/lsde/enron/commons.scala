@@ -18,6 +18,7 @@ object Commons {
     val ENRON_SENTIMENT_DATAFRAME = s"$LSDE_ENRON/sentiment_df.parquet"
     val ENRON_SENTIMENT_RDD = s"$LSDE_ENRON/sentiment.rdd"
     val ENRON_SENTIMENT_RESUME_JSON = s"$LSDE_ENRON/sentiment_resume.json"
+    val ENRON_SENTIMENT_RESUME_MB_JSON = s"$LSDE_ENRON/sentiment_resume_mb/sentiment_resume_%s.json"
 
     // PRICES
     val ENRON_STOCK_PRICES_CSV = s"$LSDE_ENRON/enron_stock_prices.csv"
