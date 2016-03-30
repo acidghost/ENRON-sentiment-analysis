@@ -253,12 +253,12 @@ Then, we perform a post processing step in which we firstly resample the time se
 Moreover, we apply an interpolation function (i.e., polynomial, $4^{th}$ order) to smooth out our time series.
 The result is shown in Figure~\ref{fig:sentiment_vs_stock} where we can notice the dramatic drop of the stock values by the end of 2001.
 Although the sentiment value seems not to be strongly affected by the stock's drop, we point out it has a decreasing overall trend.
-Indeed, the Pearson correlation  coefficient between the stock price and the sentiment time series is some $0.28$.
+Indeed, the Pearson correlation  coefficient between the stock price and the sentiment time series is some $0.11$.
 
 \begin{figure}[h!]
 \centering
 \includegraphics[width=0.48\textwidth]{imgs/sentiment_vs_stock_overall.pdf}
-\caption{Time series of ENRON's stock price (blue) and sentiment values extracted from emails (green), from 2000-01-01 to 2001-12-31.}
+\caption{Time series of ENRON's stock price (blue) and sentiment values extracted from emails (green), from 1998-01-01 to 2002-12-31.}
 \label{fig:sentiment_vs_stock}
 \end{figure}
 
@@ -268,7 +268,7 @@ This might be due to either low sentiment-annotation quality by the employed lib
 \begin{figure}[h!]
 \centering
 \includegraphics[width=0.48\textwidth]{imgs/sentiment_vs_stock_overall_hist.pdf}
-\caption{Distribution of sentiment values extracted from emails, from 2000-01-01 to 2001-12-31.}
+\caption{Distribution of sentiment values extracted from emails, from 1998-01-01 to 2002-12-31.}
 \label{fig:sentiment_dist_hist}
 \end{figure}
 
@@ -310,16 +310,7 @@ Last but not least we want to thank SURFsara\footnote{\url{www.surf.nl}} for pro
 \begin{appendix}
 TODOdfdsfdsfds
 
-\tablehead{Correlation & Custodians \\}
-\begin{supertabular}{|c|l|}
-
 \input{corrleation_per_user_table.txt}
-
-\end{supertabular}
-
-
-
-
 
 
 \end{appendix}

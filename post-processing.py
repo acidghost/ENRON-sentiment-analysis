@@ -13,6 +13,7 @@ matplotlib.rcParams.update({'font.size': 12})
 def plot(df, custodian, hist):
 	print " plot: " + custodian,
 	save_path = "paper/imgs/sentiment_vs_stock_" + custodian
+	save_path2 = "paper/imgs/hist/sentiment_vs_stock_" + custodian
 
 	## PLOT
 	fig = plt.figure(figsize=(6, 4))
@@ -31,12 +32,14 @@ def plot(df, custodian, hist):
 	## HIST
 	if hist != False:
 		fig = plt.figure(figsize=(6, 4))
-		ax = df.sentiment.plot(kind="hist")
+		ax = df.sentiment.plot(kind="hist", bins=10)
 		ax.set_xlabel('sentiment')
+		ax.set_xlim(1,3)
 		if custodian != "overall":
 			plt.title(custodian)
 		plt.tight_layout()
-		plt.savefig(save_path + "_hist.pdf")
+		plt.savefig(save_path2 + "_hist.pdf")
+	plt.close('all')
 
 def plot_overall(df):
 	save_path = "paper/imgs/sentiment_vs_stock_overall"
@@ -55,10 +58,13 @@ def plot_overall(df):
 
 	## HIST
 	fig = plt.figure(figsize=(6, 4))
-	ax = df.sentiment.plot(kind="hist")
+	ax = df.sentiment.plot(kind="hist", bins=10)
 	ax.set_xlabel('sentiment')
+	ax.set_xlim(1,3)
 	plt.tight_layout()
 	plt.savefig(save_path + "_hist.pdf")
+
+	plt.close('all')
 
 def plot_info(df):
 	print "\n*****************************"
@@ -100,7 +106,7 @@ def pre_processing_overall(df, span_value):
 data_overall = data_loading_overall("visualization/data/part-00000")
 data_overall = pre_processing_overall(df=data_overall, span_value=50)
 plot_overall(data_overall)
-# plot_info(data_overall)
+plot_info(data_overall)
 
 
 ## INDIVIDUAL STUFF
@@ -114,17 +120,17 @@ for custodian_id, df in data_individual.groupby("custodian"):
 	df = df[["stock", "sentiment"]]
 	df.stock = df.stock.interpolate()
 	df.sentiment = df.sentiment.ewm(span=100).mean()
-	plot(df, custodian_id, False)
+	plot(df, custodian_id, True)
 
 corr_per_user = pd.DataFrame.from_dict(corr_per_user, orient="index")
 corr_per_user = corr_per_user.rename(columns = {0:'stock_sentiment_corr'})
 corr_per_user = corr_per_user.sort_values("stock_sentiment_corr", ascending=False)
 corr_per_user = corr_per_user.round(decimals=3)
-corr_per_user = corr_per_user.reset_index()
 
 print corr_per_user
-
-
+f = open('paper/corrleation_per_user_table.txt', 'w')
+corr_per_user.to_latex(buf=f)
+corr_per_user.to_json('visualization/data/corr_per_user.json')
 
 # users_per_corr = dict()
 # for corr_val, df in corr_per_user.groupby("stock_sentiment_corr"): 
