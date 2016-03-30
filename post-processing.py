@@ -115,15 +115,18 @@ data_individual = pre_processing(df=data_individual)
 corr_per_user = dict()
 for custodian_id, df in data_individual.groupby("custodian"):
 	df = df.sort("date")
-	corr_per_user[custodian_id] = df.corr().loc["stock", "sentiment"]
+	corr_per_user[custodian_id] = {
+		'stock_sentiment_corr': df.corr().loc["stock", "sentiment"],
+		'points': (df.sentiment.notnull() & df.stock.notnull()).sum()
+	}
 	df = df.set_index("date")
 	df = df[["stock", "sentiment"]]
 	df.stock = df.stock.interpolate()
 	df.sentiment = df.sentiment.ewm(span=100).mean()
-	plot(df, custodian_id, True)
+	# plot(df, custodian_id, True)
 
 corr_per_user = pd.DataFrame.from_dict(corr_per_user, orient="index")
-corr_per_user = corr_per_user.rename(columns = {0:'stock_sentiment_corr'})
+# corr_per_user = corr_per_user.rename(columns={ 0: 'stock_sentiment_corr', 1: 'points' })
 corr_per_user = corr_per_user.sort_values("stock_sentiment_corr", ascending=False)
 corr_per_user = corr_per_user.round(decimals=3)
 

@@ -1,157 +1,157 @@
-\begin{tabular}{lr}
+\begin{tabular}{lrr}
 \toprule
-{} &  stock\_sentiment\_corr \\
+{} &  stock\_sentiment\_corr &  points \\
 \midrule
-quenet-j       &                 0.387 \\
-brawner-s      &                 0.362 \\
-buy-r          &                 0.356 \\
-may-l          &                 0.351 \\
-whitt-m        &                 0.338 \\
-ring-a         &                 0.331 \\
-arora-h        &                 0.328 \\
-forney-j       &                 0.312 \\
-platter-p      &                 0.289 \\
-townsend-j     &                 0.252 \\
-donoho-l       &                 0.249 \\
-mims-p         &                 0.244 \\
-hodge-j2       &                 0.234 \\
-presto-k       &                 0.227 \\
-mckay-b        &                 0.226 \\
-hendrickson-s  &                 0.221 \\
-guzman-m       &                 0.214 \\
-swerzbin-m     &                 0.207 \\
-thomas-p       &                 0.204 \\
-blair-l        &                 0.199 \\
-heard-m        &                 0.189 \\
-grigsby-m      &                 0.182 \\
-linder-e       &                 0.180 \\
-crandall-s     &                 0.177 \\
-lenhart-m      &                 0.173 \\
-gay-r          &                 0.157 \\
-williams-b     &                 0.151 \\
-smith-m        &                 0.151 \\
-dickson-s      &                 0.148 \\
-tholt-j        &                 0.147 \\
-martin-t       &                 0.146 \\
-lewis-a        &                 0.144 \\
-sturm-f        &                 0.143 \\
-perlingiere-d  &                 0.138 \\
-mcconnell-m    &                 0.138 \\
-shankman-j     &                 0.135 \\
-ruscitti-k     &                 0.134 \\
-wolfe-j        &                 0.133 \\
-south-s        &                 0.127 \\
-lokey-t        &                 0.127 \\
-stclair-c      &                 0.120 \\
-symes-k        &                 0.118 \\
-bailey-s       &                 0.115 \\
-quigley-d      &                 0.112 \\
-rogers-b       &                 0.111 \\
-zufferli-j     &                 0.109 \\
-richey-c       &                 0.107 \\
-skilling-j     &                 0.105 \\
-dorland-c      &                 0.097 \\
-keavey-p       &                 0.096 \\
-reitmeyer-j    &                 0.094 \\
-haedicke-m     &                 0.091 \\
-parks-j        &                 0.090 \\
-kitchen-l      &                 0.088 \\
-taylor-m       &                 0.085 \\
-lucci-p        &                 0.075 \\
-kuykendall-t   &                 0.066 \\
-mckay-j        &                 0.065 \\
-semperger-c    &                 0.064 \\
-keiser-k       &                 0.056 \\
-fischer-m      &                 0.053 \\
-fischer-m2     &                 0.051 \\
-saibi-e        &                 0.043 \\
-allen-p        &                 0.034 \\
-nemec-g        &                 0.031 \\
-holst-k        &                 0.031 \\
-shackleton-s   &                 0.030 \\
-baughman-d     &                 0.028 \\
-hayslett-r     &                 0.026 \\
-whalley-g      &                 0.024 \\
-storey-g       &                 0.022 \\
-pereira-s      &                 0.021 \\
-donohoe-t      &                 0.020 \\
-rodrigue-r     &                 0.017 \\
-pimenov-v      &                 0.014 \\
-meyers-a       &                 0.011 \\
-ward-k         &                 0.011 \\
-white-s        &                 0.006 \\
-love-p         &                 0.003 \\
-benson-r       &                 0.003 \\
-sanders-r      &                 0.002 \\
-steffes-j      &                 0.002 \\
-stepenovitch-j &                 0.001 \\
-bass-e         &                -0.000 \\
-mclaughlin-e   &                -0.001 \\
-beck-s         &                -0.003 \\
-weldon-c       &                -0.004 \\
-cash-m         &                -0.005 \\
-watson-k       &                -0.007 \\
-solberg-g      &                -0.008 \\
-schoolcraft-d  &                -0.009 \\
-scott-s        &                -0.012 \\
-arnold-j       &                -0.013 \\
-hain-m         &                -0.015 \\
-davis-d        &                -0.015 \\
-dasovich-j     &                -0.019 \\
-neal-s         &                -0.021 \\
-shively-h      &                -0.021 \\
-gilbertsmith-d &                -0.022 \\
-lay-k          &                -0.023 \\
-slinger-r      &                -0.032 \\
-fossum-d       &                -0.037 \\
-sanchez-m      &                -0.037 \\
-lokay-m        &                -0.039 \\
-shapiro-r      &                -0.040 \\
-ring-r         &                -0.040 \\
-delainey-d     &                -0.040 \\
-hodge-j        &                -0.041 \\
-mccarty-d      &                -0.045 \\
-carson-m       &                -0.046 \\
-jones-t        &                -0.049 \\
-campbell-l     &                -0.052 \\
-harris-s       &                -0.054 \\
-germany-c      &                -0.059 \\
-horton-s       &                -0.061 \\
-king-j         &                -0.063 \\
-sager-e        &                -0.066 \\
-farmer-d       &                -0.066 \\
-williams-j     &                -0.067 \\
-causholli-m    &                -0.069 \\
-scholtes-d     &                -0.070 \\
-tycholiz-b     &                -0.076 \\
-hyatt-k        &                -0.078 \\
-griffith-j     &                -0.081 \\
-lavorato-j     &                -0.089 \\
-schwieger-j    &                -0.093 \\
-derrick-j      &                -0.098 \\
-hyvl-d         &                -0.111 \\
-stokley-c      &                -0.125 \\
-mann-k         &                -0.127 \\
-corman-s       &                -0.131 \\
-rapp-b         &                -0.132 \\
-gang-l         &                -0.134 \\
-panus-s        &                -0.136 \\
-staab-t        &                -0.147 \\
-geaccone-t     &                -0.148 \\
-ybarbo-p       &                -0.167 \\
-maggi-m        &                -0.175 \\
-cuilla-m       &                -0.178 \\
-edrm-enron-v2  &                -0.179 \\
-merris-s       &                -0.180 \\
-giron-d        &                -0.193 \\
-salisbury-h    &                -0.198 \\
-badeer-r       &                -0.199 \\
-motley-m       &                -0.199 \\
-ermis-f        &                -0.241 \\
-hernandez-j    &                -0.262 \\
-dean-c2        &                -0.273 \\
-dean-c         &                -0.329 \\
-kaminski-v     &                   NaN \\
-kean-s         &                   NaN \\
+quenet-j       &                 0.387 &      35 \\
+brawner-s      &                 0.362 &     175 \\
+buy-r          &                 0.356 &     260 \\
+may-l          &                 0.351 &      95 \\
+whitt-m        &                 0.338 &      69 \\
+ring-a         &                 0.331 &      99 \\
+arora-h        &                 0.328 &     126 \\
+forney-j       &                 0.312 &     135 \\
+platter-p      &                 0.289 &     125 \\
+townsend-j     &                 0.252 &     122 \\
+donoho-l       &                 0.249 &     121 \\
+mims-p         &                 0.244 &     230 \\
+hodge-j2       &                 0.234 &     188 \\
+presto-k       &                 0.227 &     202 \\
+mckay-b        &                 0.226 &      81 \\
+hendrickson-s  &                 0.221 &      81 \\
+guzman-m       &                 0.214 &     159 \\
+swerzbin-m     &                 0.207 &     120 \\
+thomas-p       &                 0.204 &     153 \\
+blair-l        &                 0.199 &     140 \\
+heard-m        &                 0.189 &     124 \\
+grigsby-m      &                 0.182 &     175 \\
+linder-e       &                 0.180 &      56 \\
+crandall-s     &                 0.177 &     130 \\
+lenhart-m      &                 0.173 &     283 \\
+gay-r          &                 0.157 &     172 \\
+williams-b     &                 0.151 &     198 \\
+smith-m        &                 0.151 &     210 \\
+dickson-s      &                 0.148 &      48 \\
+tholt-j        &                 0.147 &     267 \\
+martin-t       &                 0.146 &     177 \\
+lewis-a        &                 0.144 &     146 \\
+sturm-f        &                 0.143 &     183 \\
+perlingiere-d  &                 0.138 &     402 \\
+mcconnell-m    &                 0.138 &     294 \\
+shankman-j     &                 0.135 &     212 \\
+ruscitti-k     &                 0.134 &     281 \\
+wolfe-j        &                 0.133 &     190 \\
+south-s        &                 0.127 &      21 \\
+lokey-t        &                 0.127 &     161 \\
+stclair-c      &                 0.120 &     152 \\
+symes-k        &                 0.118 &     158 \\
+bailey-s       &                 0.115 &      70 \\
+quigley-d      &                 0.112 &     174 \\
+rogers-b       &                 0.111 &     390 \\
+zufferli-j     &                 0.109 &     132 \\
+richey-c       &                 0.107 &     190 \\
+skilling-j     &                 0.105 &     357 \\
+dorland-c      &                 0.097 &     279 \\
+keavey-p       &                 0.096 &     142 \\
+reitmeyer-j    &                 0.094 &      63 \\
+haedicke-m     &                 0.091 &     425 \\
+parks-j        &                 0.090 &     182 \\
+kitchen-l      &                 0.088 &     242 \\
+taylor-m       &                 0.085 &     726 \\
+lucci-p        &                 0.075 &      70 \\
+kuykendall-t   &                 0.066 &     144 \\
+mckay-j        &                 0.065 &     186 \\
+semperger-c    &                 0.064 &     121 \\
+keiser-k       &                 0.056 &      78 \\
+fischer-m      &                 0.053 &      88 \\
+fischer-m2     &                 0.051 &      46 \\
+saibi-e        &                 0.043 &     120 \\
+allen-p        &                 0.034 &     305 \\
+nemec-g        &                 0.031 &     607 \\
+holst-k        &                 0.031 &      59 \\
+shackleton-s   &                 0.030 &     666 \\
+baughman-d     &                 0.028 &     280 \\
+hayslett-r     &                 0.026 &     283 \\
+whalley-g      &                 0.024 &     307 \\
+storey-g       &                 0.022 &     161 \\
+pereira-s      &                 0.021 &     132 \\
+donohoe-t      &                 0.020 &     124 \\
+rodrigue-r     &                 0.017 &     161 \\
+pimenov-v      &                 0.014 &      65 \\
+meyers-a       &                 0.011 &      73 \\
+ward-k         &                 0.011 &     241 \\
+white-s        &                 0.006 &     211 \\
+love-p         &                 0.003 &     355 \\
+benson-r       &                 0.003 &     133 \\
+sanders-r      &                 0.002 &     294 \\
+steffes-j      &                 0.002 &     129 \\
+stepenovitch-j &                 0.001 &     191 \\
+bass-e         &                -0.000 &     381 \\
+mclaughlin-e   &                -0.001 &     339 \\
+beck-s         &                -0.003 &     470 \\
+weldon-c       &                -0.004 &     205 \\
+cash-m         &                -0.005 &     334 \\
+watson-k       &                -0.007 &     220 \\
+solberg-g      &                -0.008 &      78 \\
+schoolcraft-d  &                -0.009 &     166 \\
+scott-s        &                -0.012 &     454 \\
+arnold-j       &                -0.013 &     317 \\
+hain-m         &                -0.015 &     179 \\
+davis-d        &                -0.015 &     242 \\
+dasovich-j     &                -0.019 &     517 \\
+neal-s         &                -0.021 &     268 \\
+shively-h      &                -0.021 &     208 \\
+gilbertsmith-d &                -0.022 &     152 \\
+lay-k          &                -0.023 &     318 \\
+slinger-r      &                -0.032 &      58 \\
+fossum-d       &                -0.037 &     270 \\
+sanchez-m      &                -0.037 &      45 \\
+lokay-m        &                -0.039 &     436 \\
+shapiro-r      &                -0.040 &     294 \\
+ring-r         &                -0.040 &     116 \\
+delainey-d     &                -0.040 &     203 \\
+hodge-j        &                -0.041 &     124 \\
+mccarty-d      &                -0.045 &      96 \\
+carson-m       &                -0.046 &     193 \\
+jones-t        &                -0.049 &     574 \\
+campbell-l     &                -0.052 &     428 \\
+harris-s       &                -0.054 &      46 \\
+germany-c      &                -0.059 &     534 \\
+horton-s       &                -0.061 &     236 \\
+king-j         &                -0.063 &      59 \\
+sager-e        &                -0.066 &     485 \\
+farmer-d       &                -0.066 &     524 \\
+williams-j     &                -0.067 &     120 \\
+causholli-m    &                -0.069 &      89 \\
+scholtes-d     &                -0.070 &     162 \\
+tycholiz-b     &                -0.076 &     154 \\
+hyatt-k        &                -0.078 &     261 \\
+griffith-j     &                -0.081 &     209 \\
+lavorato-j     &                -0.089 &     359 \\
+schwieger-j    &                -0.093 &     160 \\
+derrick-j      &                -0.098 &     180 \\
+hyvl-d         &                -0.111 &     361 \\
+stokley-c      &                -0.125 &     137 \\
+mann-k         &                -0.127 &     346 \\
+corman-s       &                -0.131 &     184 \\
+rapp-b         &                -0.132 &      57 \\
+gang-l         &                -0.134 &      76 \\
+panus-s        &                -0.136 &      49 \\
+staab-t        &                -0.147 &      92 \\
+geaccone-t     &                -0.148 &     142 \\
+ybarbo-p       &                -0.167 &     145 \\
+maggi-m        &                -0.175 &      85 \\
+cuilla-m       &                -0.178 &     123 \\
+edrm-enron-v2  &                -0.179 &     202 \\
+merris-s       &                -0.180 &      36 \\
+giron-d        &                -0.193 &     344 \\
+salisbury-h    &                -0.198 &     211 \\
+badeer-r       &                -0.199 &      76 \\
+motley-m       &                -0.199 &     100 \\
+ermis-f        &                -0.241 &     118 \\
+hernandez-j    &                -0.262 &     300 \\
+dean-c2        &                -0.273 &      85 \\
+dean-c         &                -0.329 &     187 \\
+kaminski-v     &                   NaN &       0 \\
+kean-s         &                   NaN &       0 \\
 \bottomrule
 \end{tabular}
