@@ -102,6 +102,7 @@ data_overall = pre_processing_overall(df=data_overall, span_value=50)
 plot_overall(data_overall)
 # plot_info(data_overall)
 
+
 ## INDIVIDUAL STUFF
 data_individual = data_loading("visualization/data/*.json/part-00000")
 data_individual = pre_processing(df=data_individual)
