@@ -61,7 +61,7 @@ data = pre_processing(data)
 # plot_info(data)
 
 
-# for custodian_id, df in data.groupby("custodian"): # 1=custodian, 0=date
-# 	print df.corr()
+for custodian_id, df in data.groupby("custodian"): # 1=custodian, 0=date
+	print df.corr()
 	# print df.corr().loc["stock", "sentiment"]
 
