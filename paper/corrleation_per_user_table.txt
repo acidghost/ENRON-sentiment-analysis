@@ -1,0 +1,12 @@
+ 0.06 &  haedicke-m, mims-p, ruscitti-k, zufferli-j. \\
+ 0.05 &  arora-h, farmer-d, lokey-t, scholtes-d, smith-mhodge-j, rapp-b, shankman-j, hyvl-d, semperger-c, wolfe-j, blair-l, mcconnell-m, neal-s, sturm-f, grigsby-m, lenhart-m, presto-k, whalley-g, heard-m, beck-s, forney-j, arnold-j. \\
+ 0.04 &  keiser-k, kitchen-l, storey-g, tycholiz-bward-kdelainey-d, griffith-jmclaughlin-edean-c2pereira-s, schoolcraft-dlokay-m, skilling-jdorland-c, richey-c, taylor-mcarson-m, dickson-s, kuykendall-t, quenet-j. \\
+ 0.03 &  davis-d, king-j, scott-s, bass-e, holst-k, horton-s, lucci-p, staab-t, cash-m, dasovich-j. \\
+ 0.02 &  keavey-p, tholt-j, brawner-s, love-p, white-s, pimenov-v, south-s, buy-r, nemec-g, rodrigue-r, hendrickson-s, martin-t, saibi-e. \\
+ 0.01 &  derrick-j, lavorato-j, harris-s, gilbertsmith-d, hodge-j2, reitmeyer-j, stokley-c, fossum-d, townsend-j. \\
+-0.00 &  bailey-s, mann-k, slinger-r, kaminski-v, kean-s, steffes-j, merris-s, cuilla-m. \\
+-0.01 &  jones-t, allen-p, donohoe-t, sanchez-m, panus-s, gay-r, mccarty-d. \\
+-0.02 &  germany-c, parks-j, crandall-s, mckay-j, lay-k, fischer-m2, whitt-m. \\
+-0.03 &  edrm-enron-v2, platter-p, shapiro-r, lewis-a, ring-r, meyers-a, linder-e, swerzbin-m, hernandez-j, perlingiere-d, hayslett-r, thomas-p, quigley-d, weldon-c. \\
+-0.04 &  guzman-m, motley-m, symes-k, williams-b, ermis-f, sanders-r, solberg-g, baughman-d, benson-r, rogers-b, stclair-c, corman-s, ring-a, shackleton-s, williams-j, may-l, shively-h, maggi-m, mckay-b. \\
+-0.05 &  hyatt-k, dean-c, hain-m, donoho-l, stepenovitch-j, campbell-l, fischer-m, geaccone-t, badeer-r, giron-d, schwieger-j, watson-ksager-e, salisbury-h, causholli-m, gang-l, ybarbo-p. \\

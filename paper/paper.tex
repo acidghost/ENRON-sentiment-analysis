@@ -3,6 +3,9 @@
 \usepackage{balance}
 \usepackage{url}
 \usepackage{amssymb}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{supertabular}
 
 % COMANDO PER EVIDENZIARE PARTI DA LEGGERE ATTENTAMETE
 \usepackage{color,comment}
@@ -254,7 +257,7 @@ Indeed, the Pearson correlation  coefficient between the stock price and the sen
 
 \begin{figure}[h!]
 \centering
-\includegraphics[width=0.48\textwidth]{imgs/sentiment_vs_stock}
+\includegraphics[width=0.48\textwidth]{imgs/sentiment_vs_stock_overall.pdf}
 \caption{Time series of ENRON's stock price (blue) and sentiment values extracted from emails (green), from 2000-01-01 to 2001-12-31.}
 \label{fig:sentiment_vs_stock}
 \end{figure}
@@ -264,7 +267,7 @@ This might be due to either low sentiment-annotation quality by the employed lib
 
 \begin{figure}[h!]
 \centering
-\includegraphics[width=0.48\textwidth]{imgs/sentiment_dist_hist}
+\includegraphics[width=0.48\textwidth]{imgs/sentiment_vs_stock_overall_hist.pdf}
 \caption{Distribution of sentiment values extracted from emails, from 2000-01-01 to 2001-12-31.}
 \label{fig:sentiment_dist_hist}
 \end{figure}
@@ -303,11 +306,23 @@ Last but not least we want to thank SURFsara\footnote{\url{www.surf.nl}} for pro
 \bibliographystyle{abbrv}
 \bibliography{bibliography} 
 
-%\begin{appendix}
-%TODO
-%\section{BLA BLA}
-%TODO
-%\end{appendix}
+
+\begin{appendix}
+TODOdfdsfdsfds
+
+\tablehead{Correlation & Custodians \\}
+\begin{supertabular}{|c|l|}
+
+\input{corrleation_per_user_table.txt}
+
+\end{supertabular}
+
+
+
+
+
+
+\end{appendix}
 
 
 
