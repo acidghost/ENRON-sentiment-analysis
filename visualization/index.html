@@ -7,6 +7,7 @@
 
 		<script type="text/javascript" src="bower_components/coffee-script/extras/coffee-script.js"></script>
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.6.1/lodash.js"></script>
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.16/d3.js"></script>
 		<script type="text/coffeescript" src="main.coffee"></script>
 
@@ -33,6 +34,15 @@
 				stroke-width: 1;
 				shape-rendering: crispEdges;
 			}
+
+			.bar rect {
+				fill: steelblue;
+				shape-rendering: crispEdges;
+			}
+
+			.bar text {
+				fill: #fff;
+			}
 		</style>
 	</head>
 	<body>
@@ -43,6 +53,11 @@
 				</div>
 				<div class="col-xs-12 col-sm-12 col-md-4">
 					<select id="mailbox-selector" class="form-control input-sm"></select>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-12">
+					<div id="corr-chart"></div>
 				</div>
 			</div>
 			<div class="row">
