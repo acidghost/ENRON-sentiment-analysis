@@ -10,11 +10,11 @@ show_chart = (selected_mailbox) ->
 
 	margin = 
 		top: 20
-		right: 80
+		right: 120
 		bottom: 30
-		left: 50
+		left: 120
 
-	width = 960 - margin.left - margin.right
+	width = window.innerWidth - 30 - margin.left - margin.right
 	height = 500 - margin.top - margin.bottom
 
 	# time axis
@@ -92,11 +92,11 @@ show_hist = ->
 
 	margin = 
 		top: 20
-		right: 80
+		right: 120
 		bottom: 30
-		left: 50
+		left: 120
 
-	width = 960 - margin.left - margin.right
+	width = window.innerWidth - 30 - margin.left - margin.right
 	height = 500 - margin.top - margin.bottom
 
 	svg = d3.select('#corr-chart').append('svg')
@@ -104,62 +104,69 @@ show_hist = ->
 		.attr('height', height + margin.top + margin.bottom)
 		.append('g').attr('transform', "translate(#{margin.left}, #{margin.top})")
 
+	tip = d3.tip()
+		.attr('class', 'd3-tip')
+		.offset([-10, 0])
+		.html((d) -> "<strong>Name:</strong> <span class='d3-tip-number text-yellow'>#{d.name}</span><br />
+			<strong>Correlation:</strong> <span class='d3-tip-number text-green'>#{d.y}</span><br />
+			<strong>\# points:</strong> <span class='d3-tip-number text-orange'>#{d.p}</span>")
+
+	svg.call(tip)
+
 	$.get 'data/corr_per_user.json', {}, (data) ->
 
 		# preprocess
 		corrs = data.stock_sentiment_corr
-		console.debug corrs
 		names = (k for k, v of corrs)
 
 		corrs_values = (corr for k, corr of corrs)
-		console.debug corrs_values
 
-		hist_data = ({ name: k, x: v, y: v } for k, v of corrs)
-		# # hist = _.zip(hist, (v for k, v of data.points))
-		# # 	.map((h, p) -> h.y = p; h)
-		# console.debug hist
+		hist = ({ name: k, y: v } for k, v of corrs)
+		hist = _.zip(hist, _.values(data.points)).map (ary) ->
+			h = ary[0]
+			h.p = ary[1]
+			h
 
 
 		# set x and y axes
-		x = d3.scale.linear().domain([0, corrs_values.length]).range([0, width])
-		y = d3.scale.linear().domain([d3.max(corrs_values) + d3.min(corrs_values), 0]).range([height, 0])
+		x = d3.scale.ordinal()
+			.domain(hist.map (d) -> d.name)
+			.rangeRoundBands([0, width], .2)
+		y = d3.scale.linear()
+			.domain(d3.extent(hist, (d) -> d.y))
+			.range([height, 0]).nice()
 		x_axis = d3.svg.axis().scale(x).orient 'bottom'
 		y_axis = d3.svg.axis().scale(y).orient 'left'
 
-
-		# hist = d3.layout.histogram()
-		# 	.value((d) -> d.x)
-		# 	.frequency(true)(hist_data)
-		# hist = _.zip(hist, names).map((h, n) -> h.name = n; h)
-		hist = hist_data
+		color_scale = d3.scale.linear()
+			.domain(d3.extent(hist, (d) -> d.y))
+			.range([1, 0])
+		points_scale = d3.scale.linear()
+			.domain(d3.extent(hist, (d) -> d.p))
+			.range([.8, .2])
 
 		console.debug hist.length
 
 
-		index = 0
-		bar = svg.selectAll('.bar').data(hist)
-			.enter().append('g')
-			.attr('class', 'bar')
-			.attr('transform', (d) -> "translate(#{x(index+=1)}, #{height/2})")
+		bar = svg.selectAll('.bar').data(hist).enter()
 
-		index = 0
-		bar.append('rect')
-			.attr('x', (d) -> 1)
-			.attr('y', (d) -> 0)
-			.attr('width', (width / corrs_values.length)-1)
-			.attr('height', (d) -> d3.max(corrs_values) - y(d.y))
-
-		bar.append('text')
-			.attr('dy', '.75em')
-			.attr('y', 6)
-			.attr('x', x(hist[0].x) / 2)
-			.attr('text-anchor', 'middle')
-			.style('fill', 'black')
-			.text((d) -> d3.format(',.0f')(d.y) + "\n" + d.name)
+		bar.append('rect').attr('class', 'bar')
+			.style('fill', (d) -> d3.hsl((if d.y > 0 then 180 else 0), color_scale(d.y), points_scale(d.p)))
+			.attr('x', (d) -> x(d.name))
+			.attr('y', (d) -> y(Math.max(0, d.y)))
+			.attr('width', x.rangeBand())
+			.attr('height', (d) -> Math.abs(y(d.y) - y(0)))
+			.on('mouseover', tip.show)
+			.on('mouseout', tip.hide)
+			.on('click', (d) -> 
+				mailbox_selector = $('#mailbox-selector')
+				mailbox_selector.val(d.name)
+				mailbox_selector.trigger 'change'
+			)
 
 		svg.append('g')
 			.attr('class', 'x axis')
-			.attr('transform', "translate(0, #{height})")
+			.attr('transform', "translate(0, #{y(0)})")
 			.call(x_axis)
 
 		svg.append('g')
@@ -183,8 +190,14 @@ jQuery(document).ready ($) ->
 		mailbox_selector.html(options)
 
 
-	show_hist()
-	show_chart selected_mailbox
+	plot_charts = ->
+		show_hist()
+		show_chart selected_mailbox
+
+	plot_charts()
+	$(window).on 'resize', plot_charts
+
+
 
 	mailbox_selector.on 'change', (evt) ->
 		selected_mailbox = mailbox_selector.children(':selected').val()
