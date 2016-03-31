@@ -54,7 +54,9 @@ In this paper, we analyse the famous ``ENRON Corpus'' which contains 620k messag
 We extract and analyse sentiments within those messages using functional programming together with a well known engine for large-scale data processing. 
 Thus, the analysis is run in a high performance computing cluster.   
 We present our result as an interactive visualisation of the sentiment spread via emails together with the company's stock price of the same period.
-Our results show there is a weak correlation between the company's stock price and the sentiments extracted from the email corpus.
+Our results show that there is a weak correlation between the company's stock
+price and the overall sentiments extracted from the email corpus. Correlations
+become more consistent when we consider individuals mailboxes.
 
 \end{abstract}
 
@@ -73,20 +75,22 @@ Cluster computing provides a platform for executing complex parallel tasks in a 
 This means the programmer does not explicitly code how to parallelise the computation.
 Moreover, such systems rely on distributed file systems which provide large storage capabilities and support for redundancy and distributed accesses~\cite{weil2006ceph}.
 
-Furthermore, email datasets usually come in a semi structured fashion in the sense that the actual data might not be well formed. 
+Furthermore, email datasets usually come in a semi-structured fashion in the sense that the actual data might not be well formed. 
 For instance, recipients attributes and email's body can be difficult to parse.
-Thus, the analysis should include some validation steps which increases the complexity of the whole analysis process.
+Thus, the analysis should include some validation steps which increase the complexity of the whole process.
 
 In this paper, we present a sentiment analysis on the well-known ``ENRON Corpus'' which contains 619,446 messages over 158 users~\cite{shetty2004enron}.
 This dataset has been published by the Federal Energy Regulatory Commission\footnote{\url{http://www.ferc.gov/}} during its early 2000s investigation on ENRON Corp. for bankrupt and fraud.
 Although it contains the mailboxes of ENRON's employees which were involved in the court case, the messages include text from many more email addresses, for example personal or even external to the company.
-We perform a sentiment analysis on that dataset using the state-of-the-art large-scale data processing tools.
+We perform sentiment analysis using state-of-the-art large-scale data processing tools.
 Due to the size of the dataset, about 50GB, we need to parallelise the computation.
 Thus, we use a functional programming language which is natively supported by Apache Spark engine.
 The latter is deployed in a cluster system which runs the whole computation quickly and in a flexible distributed environment.
 
 Our outcome is a visualisation of the sentiment extracted from employees' emails together with the ENRON's stock price of the same period.
-Our experiment shows there is just a weak correlation between ENRON's stock price drop and sentiments extracted from the company's email dataset. 
+Our experiment shows there is just a weak correlation between ENRON's stock
+price drop and sentiments extracted from the company's email dataset.
+We also show that this is not always true if we consider individuals mailboxes.
 
 The rest of the paper is organised as follow.
 Section~\ref{sec:r-w} introduces similar works and the kind of technology used in our work.
@@ -105,13 +109,13 @@ In this section we present an overview of some works related to this paper:
 \label{sub-sec:email-dataset-analysis}
 About email dataset analysis, literature reports many works focused on exploring, filtering and describing email datasets.
 Datasets can be noisy and some preparatory work like filtering and reorganising might be helpful to have a better grip on the data.
-For instance,~\cite{klimt2004introducing} provides metrics of the ``ENRON corpus'' as well as a description of it structure.
+For instance,~\cite{klimt2004introducing} provides metrics of the ``ENRON corpus'' as well as a description of its structure.
 A thorough analysis of such structure highlights the presence of redundant and SPAM messages.
 Similarly,~\cite{zhou2007strategies} describes some cleaning strategies for the aforementioned corpus.
 In particular, the authors analyse the actual difficulties in cleaning a corporate email dataset which in the ENRON case are multiple and mainly related to the text-parsing phase.
 Indeed, the authors claim there are a certain amount of duplicate emails, addresses and attachments which might come in a slightly different format, making the parsing more challenging.
 For example, it is possible to identify duplicate messages by checking the MD5 digest of the email's body constrained by same day~\cite{corrada2004enron}.
-Moreover, email bodies ofter report forwarded text or signatures which are not useful for a sentiment extraction.
+Moreover, email bodies often report forwarded text or signatures which are not useful for a sentiment extraction.
 The authors claim that within the ENRON dataset, only 250k messages are actually unique and they belong to a total of 149 employees.
 In~\cite{klimt2004enron}, the authors investigate the feasibility of email folder prediction considering recipients attributes (e.g., \textit{From}, \textit{To}) as well as \textit{Subject} and \textit{body}.
 Unfortunately, the F1-score achieved using a Support Vector Machine (SVM) seems very poor, ranging from $0.3$ to $0.7$. 
@@ -149,9 +153,13 @@ In this paper we show a sentiment analysis of an emails dataset.
 Considering the ``ENRON corpus'' a lot of work has already been done (see Section~\ref{sub-sec:email-dataset-analysis}).
 However, in order to give our contribution, we formalise the following research questions:
 \begin{enumerate}
-	\item Is it possible to extract useful and consistent sentiment information from a noisy dataset such as ``ENRON Corups''?
+	\item Is it possible to extract useful and consistent sentiment information
+		from a noisy dataset such as ``ENRON Corpus''?
 	\item Does the sentiment extracted from ENRON's emails correlate with the company's stock price of the same period?
-	\item How individual behaviours affects the overall sentiment observable within a shoet (i.e., 1 day) timespan?
+	\item How individual behaviours affects the overall sentiment observable
+		within a short (i.e., 1 day) timespan?
+	\item Are there some particular mailboxes that show positive or negative
+		correlation with the stock prices?
 \end{enumerate}
 
 In the rest of the paper we provide a description of our setting and we attempt to answer the research questions listed above.
@@ -167,7 +175,7 @@ order to render them more easily maintainable, manageable and deployable.
 \label{sub-sec:archive-extraction}
 The first step in our data analysis pipeline comprises the extraction of the
 dataset from its \textit{zipped} form. The dataset consists of a collection of
-archives, each one enclosing an Enron's employee mailbox, containing emails in
+archives, each one enclosing an ENRON's employee mailbox, containing emails in
 both native (eml, pdf, docx) and plain text (in which attachments have been
 converted into plain text too). We decided to extract and work with the plain
 text messages, filtering out attachments. The \texttt{UnzipperDriver} job is
@@ -232,23 +240,33 @@ responsible for querying the sentiment-tagged dataset and joins it with Enron
 stock prices based on date. To do this we group emails by date and then we
 average the sentiments for that day and then join them with the stock prices
 data on the date field. Lastly we store the results as JSON so that we can
-then download them and use them for visualization purposes.
+then download them and use them for visualisation purposes.
+We apply the same computation to the individual mailboxes, to explore the
+correlation with stock prices of individual ENRON's employees.
 
-\subsection{Visualization}
-\label{sub-sec:visualization}
-The resulting JSON file is used to visualize the correlation of Enron stock
-prices with email sentiment. We created a simple line chart with two lines and
+\subsection{Visualisation}
+\label{sub-sec:visualisation}
+The resulting JSON files are used to visualise the correlation of ENRON stock
+prices with email sentiment. We created a bar chart that represents individual
+mailboxes correlations and a simple line chart with two lines and
 two vertical axes. A line represents the stock prices and another represents
-email sentiments. We built the interface in HTML and Coffeescript, using the d3
-visualization library. Because the codebase is hosted on Github we have chosen
-to deploy the visualization using Github Pages
+email sentiments. Effort has been spent to make the visualisation as easy as
+possible to navigate and interact with. We built the interface in HTML and
+Coffeescript, using the d3 visualisation library.
+Because the codebase is hosted on Github we have chosen to deploy the visualization using Github Pages
 \footnote{\url{http://acidghost.github.io/ENRON-sentiment-analysis/visualization/}}
 which offers free hosting of static files.
 
 \section{Experiment}
 \label{sec:exp}
 In this section we briefly explain the experiment run in order to obtain our results.
-After running the setup described in Section~\ref{sec:p-s}, we collect the output data.
+As already said in Section \ref{sec:p-s}, we run our experiments on an Hadoop
+cluster of 90 machines, 720 cores and 1.2PB of storage.
+Besides this the ETL task (Section \ref{sub-sec:etl}), which is the task that
+takes the most in time, lasts for 2 hours. Without any parameters and settings
+control, the sentiment analyser of CoreNLP easily fills the heap space of
+workers causing them to die prematurely.
+After running the entire pipeline, we collect the output data in JSON format.
 Then, we perform a post processing step in which we firstly resample the time series on a weekly (i.e., 7 days) basis using the average as aggregation function.
 Moreover, we apply an interpolation function (i.e., polynomial, $4^{th}$ order) to smooth out our time series.
 The result is shown in Figure~\ref{fig:sentiment_vs_stock} where we can notice the dramatic drop of the stock values by the end of 2001.
@@ -272,6 +290,83 @@ This might be due to either low sentiment-annotation quality by the employed lib
 \label{fig:sentiment_dist_hist}
 \end{figure}
 
+In Table \ref{tab:corr} is an ordered (by correlation between sentiment and
+stock prices) list of mailboxes. The rightmost column denotes the number of
+data points used to compute the correlation, that is the number of days in which
+we have both sentiment and stock prices information.
+We show in Figures \ref{fig:sentiment_vs_stock_buy} and
+\ref{fig:sentiment_dist_hist_buy} an example of positive correlation of
+sentiment and stock prices for the mailbox \texttt{buy-r}. In Figures
+\ref{fig:sentiment_vs_stock_giron} and \ref{fig:sentiment_dist_hist_giron}
+instead we show an example of negative correlation for the mailbox
+\texttt{giron-d}.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.48\textwidth]{imgs/sentiment_vs_stock_buy-r.pdf}
+\caption{Time series of ENRON's stock price (blue) and sentiment values
+	extracted from emails (green) relative to mailbox \texttt{buy-r} with
+correlation 0.356 and 260 data-points.}
+\label{fig:sentiment_vs_stock_buy}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.48\textwidth]{imgs/hist/sentiment_vs_stock_buy-r_hist.pdf}
+\caption{Distribution of sentiment values extracted from emails of \texttt{buy-r}.}
+\label{fig:sentiment_dist_hist_buy}
+\end{figure}
+
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.48\textwidth]{imgs/sentiment_vs_stock_giron-d.pdf}
+\caption{Time series of ENRON's stock price (blue) and sentiment values
+	extracted from emails (green) relative to mailbox \texttt{giron-d} with
+correlation -0.193 and 344 data-points.}
+\label{fig:sentiment_vs_stock_giron}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.48\textwidth]{imgs/hist/sentiment_vs_stock_giron-d_hist.pdf}
+\caption{Distribution of sentiment values extracted from emails of \texttt{giron-d}.}
+\label{fig:sentiment_dist_hist_giron}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.48\textwidth]{imgs/sentiment_vs_stock_skilling-j.pdf}
+\caption{Time series of ENRON's stock price (blue) and sentiment values
+	extracted from emails (green) relative to mailbox \texttt{skilling-j} with
+correlation 0.105 and 357 data-points.}
+\label{fig:sentiment_vs_stock_skilling}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.48\textwidth]{imgs/hist/sentiment_vs_stock_skilling-j_hist.pdf}
+\caption{Distribution of sentiment values extracted from emails of
+	\texttt{skilling-j}.}
+\label{fig:sentiment_dist_hist_skilling}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.48\textwidth]{imgs/sentiment_vs_stock_lay-k.pdf}
+\caption{Time series of ENRON's stock price (blue) and sentiment values
+	extracted from emails (green) relative to mailbox \texttt{lay-k} with
+correlation -0.023 and 318 data-points.}
+\label{fig:sentiment_vs_stock_lay}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.48\textwidth]{imgs/hist/sentiment_vs_stock_lay-k_hist.pdf}
+\caption{Distribution of sentiment values extracted from emails of \texttt{lay-k}.}
+\label{fig:sentiment_dist_hist_lay}
+\end{figure}
+
 
 \section{Conclusions}
 \label{sec:concl}
@@ -282,7 +377,7 @@ However, we highlight that in order to simplify our task we made some assumption
 On one hand, we claim this is absolutely common, and sometimes even necessary, in a large-scale data processing.
 On the other hand, the number and kind of assumptions might not be negligible.
 For instance, we have chosen to take into account only those recipients which appears to have a personal mailbox in our dataset.
-Therefore, people from outside the company and other employes are simply ignored.
+Therefore, people from outside the company and other employees are simply ignored.
 Given that those people have most likely contributed to the sentiment coded in the emails, we argue this assumption is rather strict and further investigations should assess weather it is the case.  
 Furthermore, we claim that our visualisation provides useful hints for highlighting a not so strong correlation between emails' sentiment and the ENRON's stock price.
 We argue this fact might be due to noise in our dataset.
@@ -308,7 +403,165 @@ Last but not least we want to thank SURFsara\footnote{\url{www.surf.nl}} for pro
 
 
 \begin{appendix}
-TODOdfdsfdsfds
+% FIXME: table is kinda broken
+\begin{supertabular}{ l r r }
+\toprule
+{} &  stock\_sentiment\_corr &  points \\
+\midrule
+quenet-j       &                 0.387 &      35 \\
+brawner-s      &                 0.362 &     175 \\
+buy-r          &                 0.356 &     260 \\
+may-l          &                 0.351 &      95 \\
+whitt-m        &                 0.338 &      69 \\
+ring-a         &                 0.331 &      99 \\
+arora-h        &                 0.328 &     126 \\
+forney-j       &                 0.312 &     135 \\
+platter-p      &                 0.289 &     125 \\
+townsend-j     &                 0.252 &     122 \\
+donoho-l       &                 0.249 &     121 \\
+mims-p         &                 0.244 &     230 \\
+hodge-j2       &                 0.234 &     188 \\
+presto-k       &                 0.227 &     202 \\
+mckay-b        &                 0.226 &      81 \\
+hendrickson-s  &                 0.221 &      81 \\
+guzman-m       &                 0.214 &     159 \\
+swerzbin-m     &                 0.207 &     120 \\
+thomas-p       &                 0.204 &     153 \\
+blair-l        &                 0.199 &     140 \\
+heard-m        &                 0.189 &     124 \\
+grigsby-m      &                 0.182 &     175 \\
+linder-e       &                 0.180 &      56 \\
+crandall-s     &                 0.177 &     130 \\
+lenhart-m      &                 0.173 &     283 \\
+gay-r          &                 0.157 &     172 \\
+williams-b     &                 0.151 &     198 \\
+smith-m        &                 0.151 &     210 \\
+dickson-s      &                 0.148 &      48 \\
+tholt-j        &                 0.147 &     267 \\
+martin-t       &                 0.146 &     177 \\
+lewis-a        &                 0.144 &     146 \\
+sturm-f        &                 0.143 &     183 \\
+perlingiere-d  &                 0.138 &     402 \\
+mcconnell-m    &                 0.138 &     294 \\
+shankman-j     &                 0.135 &     212 \\
+ruscitti-k     &                 0.134 &     281 \\
+wolfe-j        &                 0.133 &     190 \\
+south-s        &                 0.127 &      21 \\
+lokey-t        &                 0.127 &     161 \\
+stclair-c      &                 0.120 &     152 \\
+symes-k        &                 0.118 &     158 \\
+bailey-s       &                 0.115 &      70 \\
+quigley-d      &                 0.112 &     174 \\
+rogers-b       &                 0.111 &     390 \\
+zufferli-j     &                 0.109 &     132 \\
+richey-c       &                 0.107 &     190 \\
+skilling-j     &                 0.105 &     357 \\
+dorland-c      &                 0.097 &     279 \\
+keavey-p       &                 0.096 &     142 \\
+reitmeyer-j    &                 0.094 &      63 \\
+haedicke-m     &                 0.091 &     425 \\
+parks-j        &                 0.090 &     182 \\
+kitchen-l      &                 0.088 &     242 \\
+taylor-m       &                 0.085 &     726 \\
+lucci-p        &                 0.075 &      70 \\
+kuykendall-t   &                 0.066 &     144 \\
+mckay-j        &                 0.065 &     186 \\
+semperger-c    &                 0.064 &     121 \\
+keiser-k       &                 0.056 &      78 \\
+fischer-m      &                 0.053 &      88 \\
+fischer-m2     &                 0.051 &      46 \\
+saibi-e        &                 0.043 &     120 \\
+allen-p        &                 0.034 &     305 \\
+nemec-g        &                 0.031 &     607 \\
+holst-k        &                 0.031 &      59 \\
+shackleton-s   &                 0.030 &     666 \\
+baughman-d     &                 0.028 &     280 \\
+hayslett-r     &                 0.026 &     283 \\
+whalley-g      &                 0.024 &     307 \\
+storey-g       &                 0.022 &     161 \\
+pereira-s      &                 0.021 &     132 \\
+donohoe-t      &                 0.020 &     124 \\
+rodrigue-r     &                 0.017 &     161 \\
+pimenov-v      &                 0.014 &      65 \\
+meyers-a       &                 0.011 &      73 \\
+ward-k         &                 0.011 &     241 \\
+white-s        &                 0.006 &     211 \\
+love-p         &                 0.003 &     355 \\
+benson-r       &                 0.003 &     133 \\
+sanders-r      &                 0.002 &     294 \\
+steffes-j      &                 0.002 &     129 \\
+stepenovitch-j &                 0.001 &     191 \\
+bass-e         &                -0.000 &     381 \\
+mclaughlin-e   &                -0.001 &     339 \\
+beck-s         &                -0.003 &     470 \\
+weldon-c       &                -0.004 &     205 \\
+cash-m         &                -0.005 &     334 \\
+watson-k       &                -0.007 &     220 \\
+solberg-g      &                -0.008 &      78 \\
+schoolcraft-d  &                -0.009 &     166 \\
+scott-s        &                -0.012 &     454 \\
+arnold-j       &                -0.013 &     317 \\
+hain-m         &                -0.015 &     179 \\
+davis-d        &                -0.015 &     242 \\
+dasovich-j     &                -0.019 &     517 \\
+neal-s         &                -0.021 &     268 \\
+shively-h      &                -0.021 &     208 \\
+gilbertsmith-d &                -0.022 &     152 \\
+lay-k          &                -0.023 &     318 \\
+slinger-r      &                -0.032 &      58 \\
+fossum-d       &                -0.037 &     270 \\
+sanchez-m      &                -0.037 &      45 \\
+lokay-m        &                -0.039 &     436 \\
+shapiro-r      &                -0.040 &     294 \\
+ring-r         &                -0.040 &     116 \\
+delainey-d     &                -0.040 &     203 \\
+hodge-j        &                -0.041 &     124 \\
+mccarty-d      &                -0.045 &      96 \\
+carson-m       &                -0.046 &     193 \\
+jones-t        &                -0.049 &     574 \\
+campbell-l     &                -0.052 &     428 \\
+harris-s       &                -0.054 &      46 \\
+germany-c      &                -0.059 &     534 \\
+horton-s       &                -0.061 &     236 \\
+king-j         &                -0.063 &      59 \\
+sager-e        &                -0.066 &     485 \\
+farmer-d       &                -0.066 &     524 \\
+williams-j     &                -0.067 &     120 \\
+causholli-m    &                -0.069 &      89 \\
+scholtes-d     &                -0.070 &     162 \\
+tycholiz-b     &                -0.076 &     154 \\
+hyatt-k        &                -0.078 &     261 \\
+griffith-j     &                -0.081 &     209 \\
+lavorato-j     &                -0.089 &     359 \\
+schwieger-j    &                -0.093 &     160 \\
+derrick-j      &                -0.098 &     180 \\
+hyvl-d         &                -0.111 &     361 \\
+stokley-c      &                -0.125 &     137 \\
+mann-k         &                -0.127 &     346 \\
+corman-s       &                -0.131 &     184 \\
+rapp-b         &                -0.132 &      57 \\
+gang-l         &                -0.134 &      76 \\
+panus-s        &                -0.136 &      49 \\
+staab-t        &                -0.147 &      92 \\
+geaccone-t     &                -0.148 &     142 \\
+ybarbo-p       &                -0.167 &     145 \\
+maggi-m        &                -0.175 &      85 \\
+cuilla-m       &                -0.178 &     123 \\
+edrm-enron-v2  &                -0.179 &     202 \\
+merris-s       &                -0.180 &      36 \\
+giron-d        &                -0.193 &     344 \\
+salisbury-h    &                -0.198 &     211 \\
+badeer-r       &                -0.199 &      76 \\
+motley-m       &                -0.199 &     100 \\
+ermis-f        &                -0.241 &     118 \\
+hernandez-j    &                -0.262 &     300 \\
+dean-c2        &                -0.273 &      85 \\
+dean-c         &                -0.329 &     187 \\
+kaminski-v     &                   NaN &       0 \\
+kean-s         &                   NaN &       0 \\
+\bottomrule
+\label{tab:corr}
+\end{supertabular}
 
 \input{corrleation_per_user_table.txt}
 
