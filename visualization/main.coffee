@@ -43,6 +43,18 @@ show_chart = (selected_mailbox) ->
 		.attr('height', height + margin.top + margin.bottom)
 		.append('g').attr('transform', "translate(#{margin.left}, #{margin.top})")
 
+	tip = d3.tip()
+		.attr('class', 'd3-tip')
+		.offset([-10, 0])
+		.html (d) -> 
+			date = d3.time.format('%Y-%m-%d')(d.date)
+			sentiment = d3.format('.03f')(d.sentiment)
+			"<strong>Date:</strong> <span class='d3-tip-number text-lightgreen'>#{date}</span><br />
+			<strong>Sentiment:</strong> <span class='d3-tip-number text-red'>#{sentiment}</span><br />
+			<strong>Stock:</strong> <span class='d3-tip-number text-steelblue'>$ #{d.close}</span>"
+
+	svg.call tip
+
 	# get data and show chart
 	$.get selector_to_datafile(selected_mailbox), {}, (data) ->
 		data = JSON.parse data
@@ -70,6 +82,24 @@ show_chart = (selected_mailbox) ->
 		svg.append('path').style('stroke', 'steelblue').attr('d', line_stocks(data))
 		# add sentiment line
 		svg.append('path').style('stroke', 'red').attr('d', line_sentiment(data))
+
+		# add circles for tooltips
+		add_circles = (prop, scale) ->
+			svg.selectAll(".circle-#{prop}").data(data).enter().append('circle')
+				.on
+					mouseover: tip.show
+					mouseout: tip.hide
+				.style
+					fill: 'none'
+					stroke: 'none'
+					'pointer-events': 'all'
+				.attr
+					class: ".circle-#{prop}"
+					r: 5
+					cx: (d) -> x(d.date)
+					cy: (d) -> scale(d[prop])
+		add_circles 'sentiment', y2
+		add_circles 'close', y1
 
 		# create X axis
 		svg.append('g').attr('class', 'x axis')
@@ -107,9 +137,9 @@ show_hist = ->
 	tip = d3.tip()
 		.attr('class', 'd3-tip')
 		.offset([-10, 0])
-		.html((d) -> "<strong>Name:</strong> <span class='d3-tip-number text-yellow'>#{d.name}</span><br />
-			<strong>Correlation:</strong> <span class='d3-tip-number text-green'>#{d.y}</span><br />
-			<strong>\# points:</strong> <span class='d3-tip-number text-orange'>#{d.p}</span>")
+		.html((d) -> "<strong>Name:</strong> <span class='d3-tip-number text-lightgreen'>#{d.name}</span><br />
+			<strong>Correlation:</strong> <span class='d3-tip-number text-steelblue'>#{d.y}</span><br />
+			<strong>\# points:</strong> <span class='d3-tip-number text-red'>#{d.p}</span>")
 
 	svg.call(tip)
 
@@ -118,8 +148,6 @@ show_hist = ->
 		# preprocess
 		corrs = data.stock_sentiment_corr
 		names = (k for k, v of corrs)
-
-		corrs_values = (corr for k, corr of corrs)
 
 		hist = ({ name: k, y: v } for k, v of corrs)
 		hist = _.zip(hist, _.values(data.points)).map (ary) ->
@@ -135,7 +163,7 @@ show_hist = ->
 		y = d3.scale.linear()
 			.domain(d3.extent(hist, (d) -> d.y))
 			.range([height, 0]).nice()
-		x_axis = d3.svg.axis().scale(x).orient 'bottom'
+		x_axis = d3.svg.axis().scale(x).tickFormat('').orient 'bottom'
 		y_axis = d3.svg.axis().scale(y).orient 'left'
 
 		color_scale = d3.scale.linear()
@@ -145,9 +173,8 @@ show_hist = ->
 			.domain(d3.extent(hist, (d) -> d.p))
 			.range([.8, .2])
 
-		console.debug hist.length
 
-
+		# plot chart
 		bar = svg.selectAll('.bar').data(hist).enter()
 
 		bar.append('rect').attr('class', 'bar')
@@ -160,7 +187,8 @@ show_hist = ->
 			.on('mouseout', tip.hide)
 			.on('click', (d) -> 
 				mailbox_selector = $('#mailbox-selector')
-				mailbox_selector.val(d.name)
+				mailbox_selector.data('corr', d.y)
+				mailbox_selector.val d.name
 				mailbox_selector.trigger 'change'
 			)
 
@@ -183,11 +211,32 @@ jQuery(document).ready ($) ->
 	selected_mailbox = "FULL"
 	mailbox_selector = $('#mailbox-selector')
 
-	$.get 'data/mailboxes.txt', {}, (data) ->
-		mailboxes = data.split('\n')
-		options = mailboxes.map (mb) ->
-			"<option value='#{mb}'>#{mb}</option>"
+	mailbox_selector.on 'change', (evt, do_scroll) ->
+		do_scroll ?= true
+		selected_mailbox = mailbox_selector.val()
+		$('#span-mailbox').text selected_mailbox
+		$('#span-correlation').text mailbox_selector.children(':selected').data('corr')
+		$('#span-points').text mailbox_selector.children(':selected').data('points')
+		show_chart selected_mailbox
+		$('html, body').animate({ scrollTop: $('#corr-chart').offset().top }, 'slow') if do_scroll
+
+	$.get 'data/corr_per_user.json', {}, (data) ->
+		mailboxes = (k for k, v of data.stock_sentiment_corr)
+		mailboxes.unshift 'FULL'
+		correlations = (v for k, v of data.stock_sentiment_corr)
+		correlations.unshift 'N/A'
+		npoints = (v for k, v of data.points)
+		npoints.unshift 'N/A'
+		options = _.zip(mailboxes, correlations, npoints)
+			.sort (a, b) ->
+				if a[0] > b[0] then 1
+				else if a[0] < b[0] then -1
+				else 0
+
+		options = options.map (mb) ->
+				"<option data-corr='#{mb[1]}' data-points='#{mb[2]}' value='#{mb[0]}' #{if mb[0] is 'FULL' then 'selected' else ''}>#{mb[0]}</option>"
 		mailbox_selector.html(options)
+		mailbox_selector.trigger 'change', [false]
 
 
 	plot_charts = ->
@@ -196,10 +245,4 @@ jQuery(document).ready ($) ->
 
 	plot_charts()
 	$(window).on 'resize', plot_charts
-
-
-
-	mailbox_selector.on 'change', (evt) ->
-		selected_mailbox = mailbox_selector.children(':selected').val()
-		show_chart selected_mailbox
 
