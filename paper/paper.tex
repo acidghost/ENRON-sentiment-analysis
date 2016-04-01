@@ -75,7 +75,7 @@ Cluster computing provides a platform for executing complex parallel tasks in a 
 This means the programmer does not explicitly code how to parallelise the computation.
 Moreover, such systems rely on distributed file systems which provide large storage capabilities and support for redundancy and distributed accesses~\cite{weil2006ceph}.
 
-Furthermore, email datasets usually come in a semi-structured fashion in the sense that the actual data might not be well formed. 
+Furthermore, email datasets usually come in a semi structured fashion in the sense that the actual data might not be well formed. 
 For instance, recipients attributes and email's body can be difficult to parse.
 Thus, the analysis should include some validation steps which increase the complexity of the whole process.
 
@@ -290,7 +290,7 @@ This might be due to either low sentiment-annotation quality by the employed lib
 \label{fig:sentiment_dist_hist}
 \end{figure}
 
-In Table \ref{tab:corr} is an ordered (by correlation between sentiment and
+In Table $7$ and Table $8$ is an ordered (by correlation between sentiment and
 stock prices) list of mailboxes. The rightmost column denotes the number of
 data points used to compute the correlation, that is the number of days in which
 we have both sentiment and stock prices information.
@@ -401,10 +401,11 @@ Last but not least we want to thank SURFsara\footnote{\url{www.surf.nl}} for pro
 \bibliographystyle{abbrv}
 \bibliography{bibliography} 
 
-
+\clearpage
 \begin{appendix}
-% FIXME: table is kinda broken
+
 \begin{supertabular}{ l r r }
+%\label{tab:corr_pos}
 \toprule
 {} &  stock\_sentiment\_corr &  points \\
 \midrule
@@ -491,7 +492,17 @@ benson-r       &                 0.003 &     133 \\
 sanders-r      &                 0.002 &     294 \\
 steffes-j      &                 0.002 &     129 \\
 stepenovitch-j &                 0.001 &     191 \\
-bass-e         &                -0.000 &     381 \\
+bass-e         &                 0.000 &     381 \\
+\bottomrule
+\end{supertabular}
+
+
+\clearpage
+\begin{supertabular}{ l r r }
+%\label{tab:corr_neg}
+\toprule
+{} &  stock\_sentiment\_corr &  points \\
+\midrule
 mclaughlin-e   &                -0.001 &     339 \\
 beck-s         &                -0.003 &     470 \\
 weldon-c       &                -0.004 &     205 \\
@@ -560,10 +571,7 @@ dean-c         &                -0.329 &     187 \\
 kaminski-v     &                   NaN &       0 \\
 kean-s         &                   NaN &       0 \\
 \bottomrule
-\label{tab:corr}
 \end{supertabular}
-
-\input{corrleation_per_user_table.txt}
 
 
 \end{appendix}
